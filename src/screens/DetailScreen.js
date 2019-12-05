@@ -13,12 +13,33 @@ class DetailScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
+
+                <View style={styles.box}>
+                    <View style={styles.resultRow}>
+                        <Text style={styles.resultCell}>Mortgage Amount</Text>
+                        <Text style={styles.resultCell}>$ {this.props.values.mortgageAmount}</Text>
+                    </View>
+                    <View style={styles.resultRow}>
+                        <Text style={styles.resultCell}>Total Interest</Text>
+                        <Text style={styles.resultCell}>$ {this.props.values.totalInterest}</Text>
+                    </View>
+                    <View style={styles.resultRow}>
+                        <Text style={styles.resultCell}>Total Payment</Text>
+                        <Text style={styles.resultCell}>$ {this.props.values.totalPayment}</Text>
+                    </View>
+                    <View style={styles.resultRow}>
+                        <Text style={styles.resultCell}>({this.props.values.frequency}) </Text>
+                        <Text style={styles.resultCell}>($ {this.props.values.result})</Text>
+                    </View>
+
+                </View>
+
                 <Text style={styles.header}>Payment Schedule</Text>
-                <View style={styles.row}>
-                    <Text style={[styles.cell, {width: 30}]}>#</Text>
-                    <Text style={styles.cell}>Principal</Text>
-                    <Text style={styles.cell}>Interest</Text>
-                    <Text style={styles.cell}>Balance</Text>
+                <View style={styles.tableHeader}>
+                    <Text style={[styles.cell, {width: 30, color: 'white'}]}>#</Text>
+                    <Text style={[styles.cell, {color: 'white'}]}>Principal</Text>
+                    <Text style={[styles.cell, {color: 'white'}]}>Interest</Text>
+                    <Text style={[styles.cell, {color: 'white'}]}>Balance</Text>
                 </View>
 
                 <FlatList
@@ -70,12 +91,35 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
         paddingTop: 5,
         borderBottomWidth: 1,
-        borderColor: 'gray',
+        borderColor: '#e3e3e3',
+    },
+    tableHeader: {
+        flexDirection: 'row',
+        paddingBottom: 5,
+        paddingTop: 5,
+        backgroundColor: 'gray',
+        color: 'white',
     },
     cell: {
         width: (WIDTH * 0.9 - 30)/3,
         textAlign: 'center'
-    }
+    },
+    box: {
+        marginTop: 10,
+        width: '100%',
+        alignSelf: 'center',
+        borderWidth: 1,
+        borderColor: '#0959b0',
+        padding: 5,
+        paddingLeft: 20,
+        marginBottom: 20,
+    },
+    resultRow: {
+        flexDirection: 'row',
+    },
+    resultCell: {
+        width: (WIDTH * 0.9) / 2,
+    },
 });
 
 const mapStateToProps = (state) => {

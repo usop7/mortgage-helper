@@ -32,7 +32,7 @@ class CalculatorScreen extends React.Component {
             <Text style={styles.header}>Mortgage Detail</Text>
 
             <View style={styles.row}>
-                <Icon name="home" size={35} color="#3e68ab" />
+                <Icon name="home" size={35} color="gray" />
                 <TextInput 
                     style={styles.input}
                     onChangeText={text => {this._onInputChange(text, 'homePrice')}}
@@ -41,7 +41,7 @@ class CalculatorScreen extends React.Component {
             </View>
 
             <View style={styles.row}>
-                <Icon name="money" size={30} color="#3e68ab" />
+                <Icon name="download" size={35} color="gray" />
                 <TextInput 
                     style={styles.input} 
                     onChangeText={text => {this._onInputChange(text, 'downPayment')}}
@@ -50,7 +50,7 @@ class CalculatorScreen extends React.Component {
             </View>
 
             <View style={styles.row}>
-                <Icon name="calendar" size={35} color="#3e68ab" />
+                <Icon name="calendar" size={35} color="gray" />
                 <TextInput 
                     style={styles.input}
                     onChangeText={text => {this._onInputChange(text, 'term')}}
@@ -58,7 +58,7 @@ class CalculatorScreen extends React.Component {
             </View>
 
             <View style={styles.row}>
-                <Icon name="percent" size={35} color="#3e68ab" />
+                <Icon name="percent" size={35} color="gray" />
                 <TextInput 
                     style={styles.input}
                     onChangeText={text => {this._onInputChange(text, 'rate')}}
@@ -66,7 +66,7 @@ class CalculatorScreen extends React.Component {
             </View>
 
             <View style={styles.row}>
-                <Icon name="clock-o" size={35} color="#3e68ab" />
+                <Icon name="clock-o" size={35} color="gray" />
                 <Picker
                     selectedValue={this.state.frequency}
                     style={styles.picker}
@@ -116,7 +116,7 @@ class CalculatorScreen extends React.Component {
             let divider = 1;
             if (frequency === "monthly")
                 divider = 12;
-            else if (frequency === "bi-Weekly")
+            else if (frequency === "bi-weekly")
                 divider = 26;
             else if (frequency === "weekly")
                 divider = 52;
@@ -173,7 +173,7 @@ class CalculatorScreen extends React.Component {
     },
     header: {
         fontSize: 18,
-        color: '#3e68ab',
+        color: '#0959b0',
         marginBottom: 10,
     },
     row: {
@@ -183,7 +183,7 @@ class CalculatorScreen extends React.Component {
     },
     input: {
         backgroundColor: '#d7dade',
-        borderRadius: 10,
+        borderRadius: 30,
         width: '85%',
         height: 40,
         marginLeft: 20,
@@ -200,7 +200,7 @@ class CalculatorScreen extends React.Component {
         alignItems: 'center',
         alignSelf: 'center',
         borderWidth: 1,
-        borderColor: '#3e68ab',
+        borderColor: '#0959b0',
         padding: 5,
     },
     result: {
