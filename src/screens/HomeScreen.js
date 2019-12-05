@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import CalculatorScreen from './CalculatorScreen'
 import DetailScreen from './DetailScreen'
+import SavedScreen from './SavedScreen'
 
 
 class RateScreen extends React.Component {
@@ -17,16 +18,6 @@ class RateScreen extends React.Component {
           <Text>Settings!</Text>
         </View>
       );
-    }
-}
-
-class SavedScreen extends React.Component {
-    render() {
-        return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Settings!</Text>
-        </View>
-        );
     }
 }
 

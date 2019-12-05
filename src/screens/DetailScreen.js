@@ -77,6 +77,7 @@ class RowComponent extends React.PureComponent {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: 'white',
         width: '100%',
         alignSelf: 'stretch',
         padding: 20

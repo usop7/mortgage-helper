@@ -1,17 +1,21 @@
 import React from 'react';
-import { Text, View, StyleSheet, TextInput, Picker } from 'react-native';
+import { Text, View, StyleSheet, TextInput, Picker, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { calculateValues } from '../actions/CalculateAction';
+import { calculateValues, updateListings } from '../actions/CalculateAction';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DialogInput from 'react-native-dialog-input';
 
 import { inputNumberFormat, uncomma, comma } from '../tools/comma'
+import { storeData, getAllData } from '../storage/StorageHelper'
 
 class CalculatorScreen extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            dialogVisible: false,
+
             homePrice: '',
             downPayment: '',
             rate: 0,
@@ -37,6 +41,7 @@ class CalculatorScreen extends React.Component {
                     style={styles.input}
                     onChangeText={text => {this._onInputChange(text, 'homePrice')}}
                     value={this.state.homePrice}
+                    keyboardType={'numeric'}
                     placeholder="Home Price"/>
             </View>
 
@@ -46,6 +51,7 @@ class CalculatorScreen extends React.Component {
                     style={styles.input} 
                     onChangeText={text => {this._onInputChange(text, 'downPayment')}}
                     value={this.state.downPayment}
+                    keyboardType={'numeric'}
                     placeholder="Down Payment"/>
             </View>
 
@@ -54,6 +60,7 @@ class CalculatorScreen extends React.Component {
                 <TextInput 
                     style={styles.input}
                     onChangeText={text => {this._onInputChange(text, 'term')}}
+                    keyboardType={'numeric'}
                     placeholder="Mortgage Years"/>
             </View>
 
@@ -62,6 +69,7 @@ class CalculatorScreen extends React.Component {
                 <TextInput 
                     style={styles.input}
                     onChangeText={text => {this._onInputChange(text, 'rate')}}
+                    keyboardType={'numeric'}
                     placeholder="Interest Rate"/>
             </View>
 
@@ -82,8 +90,42 @@ class CalculatorScreen extends React.Component {
                 <Text style={styles.result}>$ {comma(this.state.result)}</Text>
             </View>
 
+            <Button
+                title="Save"
+                onPress={ () => {this.showDialog(true)}} />
+
+            <DialogInput 
+                isDialogVisible={this.state.dialogVisible}
+                title={"Save"}
+                message={"Enter a mortgage name"}
+                hintInput ={"430K Townhouse"}
+                submitInput={ (text) => this.submitDialog(text) }
+                closeDialog={ () => this.showDialog(false)}>
+            </DialogInput>
+
         </View>
       );
+    }
+
+    showDialog(visible) {
+        this.setState({dialogVisible: visible});
+    }
+
+    submitDialog(text) {
+        let dict = {
+            homePrice: this.state.homePrice,
+            downPayment: this.state.downPayment,
+            rate: this.state.rate,
+            term: this.state.term,
+            frequency: this.state.frequency,
+            result: this.state.result
+        }
+        dict = JSON.stringify(dict);
+        if(storeData(text, dict)) {
+            const listing = [text, dict];
+            this.props.updateListings(listing);
+        };
+        this.showDialog(false);
     }
 
     _onInputChange = (text, type) => {
@@ -167,6 +209,7 @@ class CalculatorScreen extends React.Component {
   const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: 'white',
         width: '100%',
         alignSelf: 'stretch',
         padding: 30
@@ -202,6 +245,7 @@ class CalculatorScreen extends React.Component {
         borderWidth: 1,
         borderColor: '#0959b0',
         padding: 5,
+        marginBottom: 20,
     },
     result: {
         fontSize: 30,
@@ -211,13 +255,14 @@ class CalculatorScreen extends React.Component {
 });
 
 const mapStateToProps = (state) => {
-    const { values } = state
-    return { values }
+    const { values, listings } = state
+    return { values, listings }
 };
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
         calculateValues,
+        updateListings,
     }, dispatch)
   );
 
