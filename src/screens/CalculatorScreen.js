@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, StyleSheet, TextInput, Picker, Button, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, StyleSheet, TextInput, Picker, ScrollView, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { calculateValues } from '../actions/CalculateAction';
@@ -8,6 +8,9 @@ import DialogInput from 'react-native-dialog-input';
 
 import { uncomma, comma } from '../tools/comma'
 import { storeData, getAllData } from '../storage/StorageHelper'
+import { Color } from '../components/Values'
+
+const HEIGHT = Dimensions.get('window').height;
 
 class CalculatorScreen extends React.Component {
 
@@ -20,8 +23,9 @@ class CalculatorScreen extends React.Component {
             downPayment: '',
             rate: 0,
             term: 0,
-            frequency: 'monthly',
+            frequency: 'Monthly',
             
+            n: 0,
             result: '',
             mortgageAmount: '',
             totalInterest: '',
@@ -35,19 +39,16 @@ class CalculatorScreen extends React.Component {
     render() {
       return (
           <ScrollView style={styles.screen}>
-            <View style={styles.top}>
-                <Text style={styles.title}>Mortgage Detail</Text>
+          
+            <View style={styles.header}>
+                <Text style={{fontSize: 18, color: 'white'}}>{this.state.frequency} Payment</Text>
+                <Text style={styles.result}>$ {comma(this.state.result)}</Text>
             </View>
 
             <View style={styles.container}>
 
-                <View style={styles.box}>
-                    <Text style={{fontSize: 18}}>Your {this.state.frequency} payment will be</Text>
-                    <Text style={styles.result}>$ {comma(this.state.result)}</Text>
-                </View>
-
                 <View style={styles.row}>
-                    <Icon name="home" size={35} color="gray" />
+                    <Icon name="home" size={35} color={Color.primary} />
                     <TextInput 
                         style={styles.input}
                         onChangeText={text => {this._onInputChange(text, 'homePrice')}}
@@ -57,12 +58,12 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color="gray" />
+                        <Icon name="question-circle-o" size={20} color={Color.primary} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.row}>
-                    <Icon name="download" size={35} color="gray" />
+                    <Icon name="download" size={35} color={Color.primary} />
                     <TextInput 
                         style={styles.input} 
                         onChangeText={text => {this._onInputChange(text, 'downPayment')}}
@@ -72,12 +73,12 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color="gray" />
+                        <Icon name="question-circle-o" size={20} color={Color.primary} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.row}>
-                    <Icon name="calendar" size={35} color="gray" />
+                    <Icon name="calendar" size={35} color={Color.primary} />
                     <TextInput 
                         style={styles.input}
                         onChangeText={text => {this._onInputChange(text, 'term')}}
@@ -86,12 +87,12 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color="gray" />
+                        <Icon name="question-circle-o" size={20} color={Color.primary} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.row}>
-                    <Icon name="percent" size={35} color="gray" />
+                    <Icon name="percent" size={35} color={Color.primary} />
                     <TextInput 
                         style={styles.input}
                         onChangeText={text => {this._onInputChange(text, 'rate')}}
@@ -100,30 +101,32 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color="gray" />
+                        <Icon name="question-circle-o" size={20} color={Color.primary} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={[styles.row, {marginBottom: 25}]}>
-                    <Icon name="clock-o" size={35} color="gray" />
+                    <Icon name="clock-o" size={35} color={Color.primary} />
                     <Picker
                         selectedValue={this.state.frequency}
                         style={styles.picker}
                         onValueChange={(value, index) => {this._onInputChange(value, 'frequency')}} >
-                        <Picker.Item label="Monthly" value="monthly" />
-                        <Picker.Item label="Bi-weekly" value="bi-weekly" />
-                        <Picker.Item label="Weekly" value="weekly" />
+                        <Picker.Item label="Monthly" value="Monthly" />
+                        <Picker.Item label="Bi-weekly" value="Bi-weekly" />
+                        <Picker.Item label="Weekly" value="Weekly" />
                     </Picker>
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color="gray" />
+                        <Icon name="question-circle-o" size={20} color={Color.primary} />
                     </TouchableOpacity>
                 </View>
 
-                <Button
-                    title="Save"
-                    onPress={ () => {this.showDialog(true)}} />
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={ () => {this.showDialog(true)}}>
+                        <Text style={{color: 'white'}}>SAVE</Text>
+                </TouchableOpacity>
 
                 <DialogInput 
                     isDialogVisible={this.state.dialogVisible}
@@ -140,7 +143,18 @@ class CalculatorScreen extends React.Component {
     }
 
     showDialog(visible) {
-        this.setState({dialogVisible: visible});
+        const home = uncomma(this.state.homePrice);
+        const down = uncomma(this.state.downPayment);
+        const rate = this.state.rate;
+        const year = this.state.term;
+        let isValid = (home > 0 && rate >= 0 && year > 0);
+        if (isValid) {
+            this.setState({dialogVisible: visible});
+        } else {
+            Alert.alert('Check', 'Please fill in all the values first!')
+        }
+
+        
     }
 
     submitDialog(text) {
@@ -177,7 +191,10 @@ class CalculatorScreen extends React.Component {
     }
 
     _onInputChange = (text, type) => {
-        let value = (type === 'homePrice' || type === 'downPayment') ? comma(uncomma(text)) : text;
+        let value = text;
+        if (type === 'downPayment' || type === 'homePrice') {
+            value = comma(uncomma(text))
+        }
         this.setState({
             [type]: value
         },() => {
@@ -196,25 +213,24 @@ class CalculatorScreen extends React.Component {
         let isValid = (home > 0 && rate >= 0 && year > 0);
 
         var detailArray = [];
-        const mortgage = +home - down;
-        let result = '', totalPayment = '', totalInterest = '';
+        const mortgage = Math.max(home - down, 0);
+
+        let result = '', totalPayment = '', totalInterest = '', n = 0;
         if (isValid) {
-            console.log(home, down, rate, year)
-        
             // Calculation
             let balance = mortgage;
             
             let divider = 1;
-            if (frequency === "monthly")
+            if (frequency === "Monthly")
                 divider = 12;
-            else if (frequency === "bi-weekly")
+            else if (frequency === "Bi-weekly")
                 divider = 26;
-            else if (frequency === "weekly")
+            else if (frequency === "Weekly")
                 divider = 52;
 
             const i = rate/divider/100;
             const v = 1/(1+i);
-            const n = Math.trunc(year * divider);
+            n = Math.trunc(year * divider);
             const formula = (1 - Math.pow(v, n)) / i;
 
             if (i === 0)
@@ -243,6 +259,7 @@ class CalculatorScreen extends React.Component {
 
         // Update Results
         this.setState({
+            n: n,
             result: comma(Math.round(result, 0)),
             mortgageAmount: comma(mortgage),
             totalInterest: comma(Math.round(totalInterest, 0)),
@@ -258,26 +275,31 @@ class CalculatorScreen extends React.Component {
   const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#0959b0',
+        backgroundColor: Color.primary,
+    },
+    header: {
+        width: '100%',
+        alignItems: 'center',
+        alignSelf: 'center',
+        marginTop: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+    },
+    result: {
+        fontSize: 40,
+        color: 'white',
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        marginTop: 10,
     },
     container: {
         backgroundColor: 'white',
-        width: '100%',
-        alignSelf: 'stretch',
+        width: '95%',
+        alignSelf: 'center',
         padding: 30,
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
-    },
-    top: {
-        height: 80,
-        justifyContent: 'flex-end',
-        flex: 1,
-        paddingBottom: 15,
-    },
-    title: {
-        color: 'white',
-        fontSize: 20,
-        paddingLeft: 30,
+        minHeight: HEIGHT - 200,
     },
     row: {
         flexDirection: 'row',
@@ -285,7 +307,7 @@ class CalculatorScreen extends React.Component {
         marginBottom: 10,
     },
     input: {
-        backgroundColor: '#ddd',
+        backgroundColor: '#ededed',
         borderRadius: 30,
         width: '70%',
         height: 40,
@@ -297,19 +319,12 @@ class CalculatorScreen extends React.Component {
         width: '70%',
         marginLeft: 20,
     },
-    box: {
-        width: '100%',
-        backgroundColor: '#f0b026',
-        alignItems: 'center',
-        alignSelf: 'center',
-        padding: 5,
-        marginBottom: 20,
-        borderRadius: 10,
-    },
-    result: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        alignSelf: 'center',
+    button: {
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: Color.dark, 
+        height: 40,
+        borderRadius: 30,
     }
 });
 

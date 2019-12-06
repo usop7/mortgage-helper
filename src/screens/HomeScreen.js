@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import CalculatorScreen from './CalculatorScreen'
 import DetailScreen from './DetailScreen'
 import SavedScreen from './SavedScreen'
+import { Color } from '../components/Values'
 
 
 class RateScreen extends React.Component {
@@ -48,7 +49,7 @@ const TabNavigator = createBottomTabNavigator(
             },
         }),
         tabBarOptions: {
-            activeTintColor: '#007AFF',
+            activeTintColor: Color.primary,
             inactiveTintColor: 'gray',
         },
   }

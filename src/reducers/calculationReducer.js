@@ -8,6 +8,7 @@ const INITIAL_STATE = {
     term: 0,
     frequency: 'monthly',
     
+    n: 0,
     result: '',
     mortgageAmount: '',
     totalInterest: '',

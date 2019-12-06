@@ -6,6 +6,7 @@ import { getAllData, removeData } from '../storage/StorageHelper'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { uncomma, comma } from '../tools/comma'
+import { Color } from '../components/Values'
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -32,10 +33,10 @@ class SavedScreen extends React.Component {
         }
 
         return (
-            <ScrollView style={styles.screen}>
-
-                <View style={styles.top}>
-                    <Text style={styles.pageTitle}>Saved Listings</Text>
+            <View style={styles.screen}>
+          
+                <View style={styles.header}>
+                    <Text style={{fontSize: 18, color: 'white'}}>SAVED</Text>
                 </View>
 
                 <View style={styles.container}>
@@ -45,7 +46,7 @@ class SavedScreen extends React.Component {
                         renderItem={this._renderItem} />
                 </View>
 
-            </ScrollView>
+            </View>
         );
     }
 
@@ -67,7 +68,7 @@ class SavedScreen extends React.Component {
 class ListingComponent extends React.PureComponent {
     render() {
         return (
-            <View style={[styles.box, styles.dropShadowDefault, {flexDirection:'row'}]}>
+            <View style={[styles.listing, styles.dropShadowDefault, {flexDirection:'row'}]}>
 
                 <TouchableOpacity 
                     style={{width: '85%'}}
@@ -97,8 +98,8 @@ class ListingComponent extends React.PureComponent {
                     </View>
 
                     <View style={styles.row}>
-                        <Text style={[styles.cell, {color: '#0959b0'}]}>{this.props.item.frequency} payment</Text>
-                        <Text style={[styles.cell, {color: '#0959b0'}]}>$ {this.props.item.result}</Text>
+                        <Text style={[styles.cell, {color: Color.highlight}]}>{this.props.item.frequency} payment</Text>
+                        <Text style={[styles.cell, {color: Color.highlight}]}>$ {this.props.item.result}</Text>
                     </View>
 
                 </TouchableOpacity>
@@ -106,7 +107,7 @@ class ListingComponent extends React.PureComponent {
                 <TouchableOpacity
                     style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                     onPress={() => this.onDeleteClick(this.props.title)}>
-                    <Icon name="minus-circle" size={25} color="gray" />
+                    <Icon name="minus-circle" size={20} color="gray" />
                 </TouchableOpacity>
 
             </View>
@@ -148,37 +149,38 @@ class ListingComponent extends React.PureComponent {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#0959b0',
-    },
-    container: {
-        backgroundColor: 'white',
-        width: '100%',
-        padding: 30,
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-        minHeight: HEIGHT - 150,
-    },
-    top: {
-        height: 80,
-        justifyContent: 'flex-end',
-        flex: 1,
-        paddingBottom: 15,
-    },
-    pageTitle: {
-        color: 'white',
-        fontSize: 20,
-        paddingLeft: 30,
+        backgroundColor: Color.primary,
     },
     header: {
-        fontSize: 18,
-        color: '#3e68ab',
-        marginBottom: 10,
+        width: '100%',
+        alignItems: 'center',
+        alignSelf: 'center',
+        marginTop: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+    },
+    result: {
+        fontSize: 40,
+        color: 'white',
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        marginTop: 10,
+    },
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+        width: '95%',
+        alignSelf: 'center',
+        padding: 10,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        minHeight: HEIGHT - 200,
     },
     title: {
-        fontWeight: 'bold',
-        fontSize: 15,
+        color: Color.dark,
+        fontSize: 16,
     },
-    box: {
+    listing: {
         marginTop: 10,
         marginBottom: 10,
         width: '100%',
@@ -186,7 +188,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 10,
-        padding: 5,
+        borderBottomColor: Color.primary,
+        borderBottomWidth: 3,
+        padding: 10,
         paddingLeft: 20,
         backgroundColor: 'white',
     },
