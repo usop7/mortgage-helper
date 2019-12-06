@@ -1,12 +1,12 @@
 import React from 'react';
-import { Text, View, StyleSheet, TextInput, Picker, Button } from 'react-native';
+import { Text, View, StyleSheet, TextInput, Picker, Button, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { calculateValues, updateListings } from '../actions/CalculateAction';
+import { calculateValues } from '../actions/CalculateAction';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DialogInput from 'react-native-dialog-input';
 
-import { inputNumberFormat, uncomma, comma } from '../tools/comma'
+import { uncomma, comma } from '../tools/comma'
 import { storeData, getAllData } from '../storage/StorageHelper'
 
 class CalculatorScreen extends React.Component {
@@ -27,83 +27,115 @@ class CalculatorScreen extends React.Component {
             totalInterest: '',
             totalPayment: '',
             details: [],
+
+            listings: [],
         }
     }
 
     render() {
       return (
-        <View style={styles.container}>
-            <Text style={styles.header}>Mortgage Detail</Text>
-
-            <View style={styles.row}>
-                <Icon name="home" size={35} color="gray" />
-                <TextInput 
-                    style={styles.input}
-                    onChangeText={text => {this._onInputChange(text, 'homePrice')}}
-                    value={this.state.homePrice}
-                    keyboardType={'numeric'}
-                    placeholder="Home Price"/>
+          <ScrollView style={styles.screen}>
+            <View style={styles.top}>
+                <Text style={styles.title}>Mortgage Detail</Text>
             </View>
 
-            <View style={styles.row}>
-                <Icon name="download" size={35} color="gray" />
-                <TextInput 
-                    style={styles.input} 
-                    onChangeText={text => {this._onInputChange(text, 'downPayment')}}
-                    value={this.state.downPayment}
-                    keyboardType={'numeric'}
-                    placeholder="Down Payment"/>
+            <View style={styles.container}>
+
+                <View style={styles.box}>
+                    <Text style={{fontSize: 18}}>Your {this.state.frequency} payment will be</Text>
+                    <Text style={styles.result}>$ {comma(this.state.result)}</Text>
+                </View>
+
+                <View style={styles.row}>
+                    <Icon name="home" size={35} color="gray" />
+                    <TextInput 
+                        style={styles.input}
+                        onChangeText={text => {this._onInputChange(text, 'homePrice')}}
+                        value={this.state.homePrice}
+                        keyboardType={'numeric'}
+                        placeholder="Home Price ($)"/>
+                    <TouchableOpacity
+                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
+                        <Icon name="question-circle-o" size={20} color="gray" />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.row}>
+                    <Icon name="download" size={35} color="gray" />
+                    <TextInput 
+                        style={styles.input} 
+                        onChangeText={text => {this._onInputChange(text, 'downPayment')}}
+                        value={this.state.downPayment}
+                        keyboardType={'numeric'}
+                        placeholder="Down Payment ($)"/>
+                    <TouchableOpacity
+                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
+                        <Icon name="question-circle-o" size={20} color="gray" />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.row}>
+                    <Icon name="calendar" size={35} color="gray" />
+                    <TextInput 
+                        style={styles.input}
+                        onChangeText={text => {this._onInputChange(text, 'term')}}
+                        keyboardType={'numeric'}
+                        placeholder="Mortgage Years"/>
+                    <TouchableOpacity
+                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
+                        <Icon name="question-circle-o" size={20} color="gray" />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.row}>
+                    <Icon name="percent" size={35} color="gray" />
+                    <TextInput 
+                        style={styles.input}
+                        onChangeText={text => {this._onInputChange(text, 'rate')}}
+                        keyboardType={'numeric'}
+                        placeholder="Interest Rate"/>
+                    <TouchableOpacity
+                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
+                        <Icon name="question-circle-o" size={20} color="gray" />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={[styles.row, {marginBottom: 25}]}>
+                    <Icon name="clock-o" size={35} color="gray" />
+                    <Picker
+                        selectedValue={this.state.frequency}
+                        style={styles.picker}
+                        onValueChange={(value, index) => {this._onInputChange(value, 'frequency')}} >
+                        <Picker.Item label="Monthly" value="monthly" />
+                        <Picker.Item label="Bi-weekly" value="bi-weekly" />
+                        <Picker.Item label="Weekly" value="weekly" />
+                    </Picker>
+                    <TouchableOpacity
+                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
+                        <Icon name="question-circle-o" size={20} color="gray" />
+                    </TouchableOpacity>
+                </View>
+
+                <Button
+                    title="Save"
+                    onPress={ () => {this.showDialog(true)}} />
+
+                <DialogInput 
+                    isDialogVisible={this.state.dialogVisible}
+                    title={"Save"}
+                    message={"Enter a mortgage name"}
+                    hintInput ={"430K Townhouse"}
+                    submitInput={ (text) => this.submitDialog(text) }
+                    closeDialog={ () => this.showDialog(false)}>
+                </DialogInput>
+
             </View>
-
-            <View style={styles.row}>
-                <Icon name="calendar" size={35} color="gray" />
-                <TextInput 
-                    style={styles.input}
-                    onChangeText={text => {this._onInputChange(text, 'term')}}
-                    keyboardType={'numeric'}
-                    placeholder="Mortgage Years"/>
-            </View>
-
-            <View style={styles.row}>
-                <Icon name="percent" size={35} color="gray" />
-                <TextInput 
-                    style={styles.input}
-                    onChangeText={text => {this._onInputChange(text, 'rate')}}
-                    keyboardType={'numeric'}
-                    placeholder="Interest Rate"/>
-            </View>
-
-            <View style={styles.row}>
-                <Icon name="clock-o" size={35} color="gray" />
-                <Picker
-                    selectedValue={this.state.frequency}
-                    style={styles.picker}
-                    onValueChange={(value, index) => {this._onInputChange(value, 'frequency')}} >
-                    <Picker.Item label="Monthly" value="monthly" />
-                    <Picker.Item label="Bi-weekly" value="bi-weekly" />
-                    <Picker.Item label="Weekly" value="weekly" />
-                </Picker>
-            </View>
-
-            <View style={styles.box}>
-                <Text style={styles.header}>Your {this.state.frequency} payment will be</Text>
-                <Text style={styles.result}>$ {comma(this.state.result)}</Text>
-            </View>
-
-            <Button
-                title="Save"
-                onPress={ () => {this.showDialog(true)}} />
-
-            <DialogInput 
-                isDialogVisible={this.state.dialogVisible}
-                title={"Save"}
-                message={"Enter a mortgage name"}
-                hintInput ={"430K Townhouse"}
-                submitInput={ (text) => this.submitDialog(text) }
-                closeDialog={ () => this.showDialog(false)}>
-            </DialogInput>
-
-        </View>
+            </ScrollView>
       );
     }
 
@@ -112,25 +144,42 @@ class CalculatorScreen extends React.Component {
     }
 
     submitDialog(text) {
+
+        // getting yyyy-mm-dd format of current date
+        const d = new Date();
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        const year = d.getFullYear();
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+        const date = [year, month, day].join('-');
+
         let dict = {
             homePrice: this.state.homePrice,
             downPayment: this.state.downPayment,
             rate: this.state.rate,
             term: this.state.term,
             frequency: this.state.frequency,
-            result: this.state.result
+            result: this.state.result,
+            created: date
         }
         dict = JSON.stringify(dict);
-        if(storeData(text, dict)) {
-            const listing = [text, dict];
-            this.props.updateListings(listing);
-        };
+        storeData(text, dict).then(() => {
+            getAllData().then((value) => {
+                this.setState({listings: value}, () => {
+                    this.props.calculateValues(this.state);
+                })
+            });
+        });
         this.showDialog(false);
     }
 
     _onInputChange = (text, type) => {
+        let value = (type === 'homePrice' || type === 'downPayment') ? comma(uncomma(text)) : text;
         this.setState({
-            [type]: text
+            [type]: value
         },() => {
             this._calculateMortgage();
         });
@@ -146,11 +195,11 @@ class CalculatorScreen extends React.Component {
         const frequency = this.state.frequency;
         let isValid = (home > 0 && rate >= 0 && year > 0);
 
-
         var detailArray = [];
         const mortgage = +home - down;
         let result = '', totalPayment = '', totalInterest = '';
         if (isValid) {
+            console.log(home, down, rate, year)
         
             // Calculation
             let balance = mortgage;
@@ -207,17 +256,28 @@ class CalculatorScreen extends React.Component {
   }
 
   const styles = StyleSheet.create({
-    container: {
+    screen: {
         flex: 1,
+        backgroundColor: '#0959b0',
+    },
+    container: {
         backgroundColor: 'white',
         width: '100%',
         alignSelf: 'stretch',
-        padding: 30
+        padding: 30,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
     },
-    header: {
-        fontSize: 18,
-        color: '#0959b0',
-        marginBottom: 10,
+    top: {
+        height: 80,
+        justifyContent: 'flex-end',
+        flex: 1,
+        paddingBottom: 15,
+    },
+    title: {
+        color: 'white',
+        fontSize: 20,
+        paddingLeft: 30,
     },
     row: {
         flexDirection: 'row',
@@ -225,27 +285,26 @@ class CalculatorScreen extends React.Component {
         marginBottom: 10,
     },
     input: {
-        backgroundColor: '#d7dade',
+        backgroundColor: '#ddd',
         borderRadius: 30,
-        width: '85%',
+        width: '70%',
         height: 40,
         marginLeft: 20,
         paddingLeft: 20,
     },
     picker: {
         height: 40, 
-        width: '85%',
-        marginLeft: 10,
+        width: '70%',
+        marginLeft: 20,
     },
     box: {
-        marginTop: 10,
         width: '100%',
+        backgroundColor: '#f0b026',
         alignItems: 'center',
         alignSelf: 'center',
-        borderWidth: 1,
-        borderColor: '#0959b0',
         padding: 5,
         marginBottom: 20,
+        borderRadius: 10,
     },
     result: {
         fontSize: 30,
@@ -262,7 +321,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
         calculateValues,
-        updateListings,
     }, dispatch)
   );
 

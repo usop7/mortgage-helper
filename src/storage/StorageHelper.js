@@ -22,6 +22,14 @@ export const storeData = async (title, item) => {
     } catch (e) {
         console.log(e);
     }
-    return await true;
+    console.log('stored');
 };
 
+export const removeData = async (title) => {
+    try {
+        await AsyncStorage.removeItem(title);
+    } catch (e) {
+        console.log(e);
+    }
+    console.log('removed');
+};

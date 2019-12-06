@@ -4,10 +4,3 @@ export const calculateValues = (state) => (
         payload: state,
     }
 );
-
-export const updateListings = (listing) => (
-    {
-        type: 'UPDATE',
-        payload: listing,
-    }
-);

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, View, StyleSheet, FlatList, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Dimensions, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 
-import { inputNumberFormat, uncomma, comma } from '../tools/comma'
+import { uncomma, comma } from '../tools/comma'
 
 
 const WIDTH = Dimensions.get('window').width;
@@ -28,8 +28,8 @@ class DetailScreen extends React.Component {
                         <Text style={styles.resultCell}>$ {this.props.values.totalPayment}</Text>
                     </View>
                     <View style={styles.resultRow}>
-                        <Text style={styles.resultCell}>({this.props.values.frequency}) </Text>
-                        <Text style={styles.resultCell}>($ {this.props.values.result})</Text>
+                        <Text style={[styles.resultCell, {fontWeight: 'bold'}]}>{this.props.values.frequency} payment</Text>
+                        <Text style={[styles.resultCell, {fontWeight: 'bold'}]}>$ {this.props.values.result}</Text>
                     </View>
 
                 </View>
@@ -68,7 +68,7 @@ class RowComponent extends React.PureComponent {
                 <Text style={[styles.cell, {width: 30}]}>{this.props.no}</Text>
                 <Text style={styles.cell}>{this.props.principal}</Text>
                 <Text style={styles.cell}>{this.props.interest}</Text>
-                <Text style={styles.cell}>{this.props.balance}</Text>
+                <Text style={[styles.cell, {fontWeight: 'bold'}]}>{this.props.balance}</Text>
             </View>
         )
     }
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingBottom: 5,
         paddingTop: 5,
-        backgroundColor: 'gray',
+        backgroundColor: '#3e68ab',
         color: 'white',
     },
     cell: {
@@ -109,11 +109,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         width: '100%',
         alignSelf: 'center',
-        borderWidth: 1,
-        borderColor: '#0959b0',
+        backgroundColor: '#f0b026',
         padding: 5,
         paddingLeft: 20,
         marginBottom: 20,
+        borderRadius: 10,
     },
     resultRow: {
         flexDirection: 'row',

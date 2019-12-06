@@ -15,7 +15,7 @@ class RateScreen extends React.Component {
     render() {
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Settings!</Text>
+          <Text>Mortgage raet API..</Text>
         </View>
       );
     }
@@ -48,7 +48,7 @@ const TabNavigator = createBottomTabNavigator(
             },
         }),
         tabBarOptions: {
-            activeTintColor: '#0959b0',
+            activeTintColor: '#007AFF',
             inactiveTintColor: 'gray',
         },
   }

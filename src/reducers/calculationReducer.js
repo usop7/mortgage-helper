@@ -13,6 +13,8 @@ const INITIAL_STATE = {
     totalInterest: '',
     totalPayment: '',
     details: [],
+
+    listings: [],
 };
 
 var LISTING_STATE = [];
@@ -27,19 +29,6 @@ const calculationReducer = (state = INITIAL_STATE, action) => {
     }
 };
 
-const listingReducer = async (state = LISTING_STATE, action) => {
-
-    switch (action.type) {
-        case 'UPDATE':
-            let newState = LISTING_STATE;
-            newState.push(action.payload);
-            return newState;
-        default:
-            return state;
-    }
-};
-
 export default combineReducers({
     values: calculationReducer,
-    listings: listingReducer,
 });
