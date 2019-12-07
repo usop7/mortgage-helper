@@ -1,12 +1,14 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
+export const VERSION_STR = '@@VERSION';
+
 export const getVersion = async () => {
     try {
-        const currVersion = await AsyncStorage.getItem('version');
+        const currVersion = await AsyncStorage.getItem(VERSION_STR);
         if (currVersion !== null) {
             return parseInt(currVersion);
         } else {
-            await AsyncStorage.setItem('version', '0');
+            await AsyncStorage.setItem(VERSION_STR, '0');
             return 0;
         }
     } catch (error) {
@@ -16,9 +18,9 @@ export const getVersion = async () => {
 
 export const updateVersion = async () => {
     try {
-        const currVersion = await AsyncStorage.getItem('version');
+        const currVersion = await AsyncStorage.getItem(VERSION_STR);
         const newVersion = await (currVersion === null ? 0 : parseInt(currVersion)) + 1;
-        await AsyncStorage.setItem('version', newVersion.toString());
+        await AsyncStorage.setItem(VERSION_STR, newVersion.toString());
         return newVersion;
     } catch (e) {
         console.log(e);
@@ -28,7 +30,8 @@ export const updateVersion = async () => {
 export const getAllData = async () => {
     try {
         const keys = await AsyncStorage.getAllKeys();
-        return await AsyncStorage.multiGet(keys);
+        const titles = await keys.filter(e => e !== VERSION_STR);
+        return await AsyncStorage.multiGet(titles);
     } catch(e) {
         console.log(e);
     }

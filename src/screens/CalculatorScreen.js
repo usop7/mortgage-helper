@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import DialogInput from 'react-native-dialog-input';
 
 import { uncomma, comma } from '../tools/comma'
-import { storeData, getAllData, getVersion } from '../storage/StorageHelper'
+import { storeData, getAllData, getVersion, VERSION_STR } from '../storage/StorageHelper'
 import { Color } from '../components/Values'
 
 const HEIGHT = Dimensions.get('window').height;
@@ -166,6 +166,12 @@ class CalculatorScreen extends React.Component {
 
     submitDialog(text) {
 
+        // check if the title is empty
+        if ((text.trim()).length === 0 || text === VERSION_STR) {
+            Alert.alert('TITLE', 'Please enter the title.');
+            return;
+        }
+
         // getting yyyy-mm-dd format of current date
         const d = new Date();
         let month = '' + (d.getMonth() + 1);
@@ -188,8 +194,9 @@ class CalculatorScreen extends React.Component {
         }
         dict = JSON.stringify(dict);
         storeData(text, dict).then((newVersion) => {
-            this.setState({storageVersion: newVersion}, () =>{
+            this.setState({storageVersion: newVersion}, () => {
                 this.props.calculateValues(this.state);
+                Alert.alert('Saved', 'The listing was saved.');
             });
         });
         this.showDialog(false);
