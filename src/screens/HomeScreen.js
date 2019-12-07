@@ -10,7 +10,7 @@ import DetailScreen from './DetailScreen'
 import SavedScreen from './SavedScreen'
 import { Color } from '../components/Values'
 
-
+/*
 class RateScreen extends React.Component {
 
     render() {
@@ -21,12 +21,13 @@ class RateScreen extends React.Component {
       );
     }
 }
+*/
 
 const TabNavigator = createBottomTabNavigator(
     {
         Calculator: CalculatorScreen,
         Detail: DetailScreen,
-        Rate: RateScreen,
+        //Rate: RateScreen,
         Saved: SavedScreen
     },
     {

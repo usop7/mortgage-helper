@@ -18,11 +18,12 @@ class CalculatorScreen extends React.Component {
         super(props);
         this.state = {
             dialogVisible: false,
+            updated: false,
 
             homePrice: '',
             downPayment: '',
-            rate: 0,
-            term: 0,
+            rate: '',
+            term: '',
             frequency: 'Monthly',
             
             n: 0,
@@ -42,7 +43,20 @@ class CalculatorScreen extends React.Component {
                 storageVersion: version}, () => {
                     this.props.calculateValues(this.state);
             });
-        });   
+        });
+
+        // add listner
+        this.props.navigation.addListener ('willFocus', () => {
+            this.setState({
+                homePrice: this.props.navigation.getParam('homePrice', ''),
+                downPayment: this.props.navigation.getParam('downPayment', ''),
+                term: this.props.navigation.getParam('term', ''),
+                rate: this.props.navigation.getParam('rate', ''),
+                frequency: this.props.navigation.getParam('frequency', 'Monthly')
+            }, () => {
+                this._calculateMortgage();
+            });
+        });
     }
 
     render() {
@@ -92,6 +106,7 @@ class CalculatorScreen extends React.Component {
                         style={styles.input}
                         onChangeText={text => {this._onInputChange(text, 'term')}}
                         keyboardType={'numeric'}
+                        value={this.state.term}
                         placeholder="Mortgage Years"/>
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
@@ -105,6 +120,7 @@ class CalculatorScreen extends React.Component {
                     <TextInput 
                         style={styles.input}
                         onChangeText={text => {this._onInputChange(text, 'rate')}}
+                        value={this.state.rate}
                         keyboardType={'numeric'}
                         placeholder="Interest Rate"/>
                     <TouchableOpacity
@@ -119,7 +135,8 @@ class CalculatorScreen extends React.Component {
                     <Picker
                         selectedValue={this.state.frequency}
                         style={styles.picker}
-                        onValueChange={(value, index) => {this._onInputChange(value, 'frequency')}} >
+                        onValueChange={(value, index) => {this._onInputChange(value, 'frequency')}}
+                        value={this.state.frequency} >
                         <Picker.Item label="Monthly" value="Monthly" />
                         <Picker.Item label="Bi-weekly" value="Bi-weekly" />
                         <Picker.Item label="Weekly" value="Weekly" />
@@ -219,7 +236,7 @@ class CalculatorScreen extends React.Component {
         // Variable Declaration
         const home = uncomma(this.state.homePrice);
         const down = uncomma(this.state.downPayment);
-        const rate = this.state.rate;
+        const rate = (this.state.rate === '') ? 0 : this.state.rate;
         const year = this.state.term;
         const frequency = this.state.frequency;
         let isValid = (home > 0 && rate >= 0 && year > 0);

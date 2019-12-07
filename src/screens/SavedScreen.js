@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { getAllData, removeData, getVersion } from '../storage/StorageHelper'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { uncomma, comma } from '../tools/comma'
+import { uncomma, comma, title } from '../tools/comma'
 import { Color } from '../components/Values'
 
 const WIDTH = Dimensions.get('window').width;
@@ -98,13 +98,14 @@ class ListingComponent extends React.PureComponent {
                 <TouchableOpacity 
                     style={{width: '85%'}}
                     onPress={() => { this.props.navigation.navigate('Calculator', {
+                        title: this.props.title,
                         homePrice: this.props.item.homePrice,
                         downPayment: this.props.item.downPayment,
                         term: this.props.item.term,
                         rate: this.props.item.rate,
                         frequency: this.props.item.frequency}) }} >
 
-                    <Text style={styles.title}>{this.props.title}</Text>
+                    <Text style={styles.title}>{title(this.props.title)}</Text>
                     <Text style={[styles.line, {color: 'gray'}]}>Created on {this.props.item.created}</Text>
 
                     <View style={styles.row}>
@@ -123,12 +124,12 @@ class ListingComponent extends React.PureComponent {
                     </View>
 
                     <View style={styles.row}>
-                        <Text style={styles.cell}>Mortgage term</Text>
+                        <Text style={styles.cell}>Mortgage Term</Text>
                         <Text style={styles.cell}>{this.props.item.term} years</Text>
                     </View>
 
                     <View style={styles.row}>
-                        <Text style={[styles.cell, {color: Color.highlight}]}>{this.props.item.frequency} payment</Text>
+                        <Text style={[styles.cell, {color: Color.highlight}]}>{this.props.item.frequency} Payment</Text>
                         <Text style={[styles.cell, {color: Color.highlight}]}>$ {this.props.item.result}</Text>
                     </View>
 
