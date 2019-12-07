@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Text, View, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import { getAllData, removeData } from '../storage/StorageHelper'
+import { getAllData, removeData, getVersion } from '../storage/StorageHelper'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { uncomma, comma } from '../tools/comma'
@@ -16,22 +16,42 @@ class SavedScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            storageVersion: '',
             listings: [],
-            updated: false,
         }
-        this._setListings();
+        console.log('saved screen: constructing')
+    }
+
+    componentDidMount() {
+        // set up the storage version
+        getVersion().then(version => {
+            // get all listings data
+            getAllData().then(data => {
+                this.setState({
+                    storageVersion: version,
+                    listings: data}, () => {
+                        console.log('saved screen: component did mount');
+                });
+            });
+        });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.values.storageVersion !== this.props.values.storageVersion) {
+            getVersion().then(version => {
+                // get all listings data
+                getAllData().then(data => {
+                    this.setState({
+                        storageVersion: version,
+                        listings: data}, () => {
+                            console.log('saved screen: component did update');
+                    });
+                });
+            });
+        }
     }
 
     render() {
-        let listings;
-        if (this.state.updated) {
-            listings = this.state.listings;
-        } else if (this.props.values.listings.length > 0) {
-            listings = this.props.values.listings;
-        } else {
-            listings = this.state.listings;
-        }
-
         return (
             <View style={styles.screen}>
           
@@ -41,7 +61,7 @@ class SavedScreen extends React.Component {
 
                 <View style={styles.container}>
                     <FlatList
-                        data={listings}
+                        data={this.state.listings}
                         keyExtractor= { (item, index) => index.toString() }
                         renderItem={this._renderItem} />
                 </View>
@@ -50,19 +70,24 @@ class SavedScreen extends React.Component {
         );
     }
 
-    async _setListings() {
-        let listings = await getAllData();
-        await this.setState({
-            listings: listings}, () => {
-                console.log('loading list');
-        });
-    }
-
     _renderItem = ({item}) => (
         <ListingComponent
+            navigation={this.props.navigation}
             title={item[0]}
-            item={JSON.parse(item[1])} />
+            item={JSON.parse(item[1])}
+            onDelete={this._deleteListing.bind(this)} />
     );
+
+    _deleteListing(title) {
+        removeData(title).then(() => {
+            getAllData().then(data => {
+                this.setState({
+                    listings: data}, () => {
+                        console.log(this.state);
+                });
+            });
+        })
+    }
 }
 
 class ListingComponent extends React.PureComponent {
@@ -72,7 +97,12 @@ class ListingComponent extends React.PureComponent {
 
                 <TouchableOpacity 
                     style={{width: '85%'}}
-                    onPress={() => this.onListingClick(this.props.title)}>
+                    onPress={() => { this.props.navigation.navigate('Calculator', {
+                        homePrice: this.props.item.homePrice,
+                        downPayment: this.props.item.downPayment,
+                        term: this.props.item.term,
+                        rate: this.props.item.rate,
+                        frequency: this.props.item.frequency}) }} >
 
                     <Text style={styles.title}>{this.props.title}</Text>
                     <Text style={[styles.line, {color: 'gray'}]}>Created on {this.props.item.created}</Text>
@@ -121,29 +151,16 @@ class ListingComponent extends React.PureComponent {
             [
                 {
                     text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
                     style: 'cancel',
                 },
                 {
                     text: 'OK', 
-                    onPress: () => this._deleteListing(title),
+                    onPress: () => this.props.onDelete(title),
                 },
             ],
         );
     }
 
-    _deleteListing(title) {
-        removeData(title).then(() => {
-            this._setListings();
-            this.setState({
-                updated: true,
-            });
-        })
-    }
-
-    onListingClick(title) {
-        console.log(title);
-    }
 }
 
 const styles = StyleSheet.create({
@@ -183,16 +200,15 @@ const styles = StyleSheet.create({
     listing: {
         marginTop: 10,
         marginBottom: 10,
-        width: '100%',
+        width: '95%',
         alignSelf: 'center',
-        borderWidth: 1,
-        borderColor: '#ddd',
+
         borderRadius: 10,
         borderBottomColor: Color.primary,
         borderBottomWidth: 3,
         padding: 10,
         paddingLeft: 20,
-        backgroundColor: 'white',
+        backgroundColor: '#f7f7f7',
     },
     row: {
         flexDirection: 'row',
@@ -208,7 +224,7 @@ const styles = StyleSheet.create({
         //ios
         shadowOpacity: 0.15,
         shadowRadius: 10,
-        shadowOffset: {height: 2, width: 0},
+        shadowOffset: {height: 2, width: 2},
         //android 
         elevation: 2,
     }

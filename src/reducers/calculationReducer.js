@@ -9,13 +9,13 @@ const INITIAL_STATE = {
     frequency: 'monthly',
     
     n: 0,
-    result: '',
+    result: 0,
     mortgageAmount: '',
     totalInterest: '',
     totalPayment: '',
     details: [],
 
-    listings: [],
+    storageVersion: '',
 };
 
 var LISTING_STATE = [];

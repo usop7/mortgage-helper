@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import DialogInput from 'react-native-dialog-input';
 
 import { uncomma, comma } from '../tools/comma'
-import { storeData, getAllData } from '../storage/StorageHelper'
+import { storeData, getAllData, getVersion } from '../storage/StorageHelper'
 import { Color } from '../components/Values'
 
 const HEIGHT = Dimensions.get('window').height;
@@ -32,8 +32,17 @@ class CalculatorScreen extends React.Component {
             totalPayment: '',
             details: [],
 
-            listings: [],
+            storageVersion: '',
         }
+    }
+
+    componentDidMount() {
+        getVersion().then(version => {
+            this.setState({
+                storageVersion: version}, () => {
+                    this.props.calculateValues(this.state);
+            });
+        });   
     }
 
     render() {
@@ -58,7 +67,7 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color={Color.primary} />
+                        <Icon name="question-circle" size={20} color={Color.yellow} />
                     </TouchableOpacity>
                 </View>
 
@@ -73,7 +82,7 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color={Color.primary} />
+                        <Icon name="question-circle" size={20} color={Color.yellow} />
                     </TouchableOpacity>
                 </View>
 
@@ -87,7 +96,7 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color={Color.primary} />
+                        <Icon name="question-circle" size={20} color={Color.yellow} />
                     </TouchableOpacity>
                 </View>
 
@@ -101,7 +110,7 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color={Color.primary} />
+                        <Icon name="question-circle" size={20} color={Color.yellow} />
                     </TouchableOpacity>
                 </View>
 
@@ -118,7 +127,7 @@ class CalculatorScreen extends React.Component {
                     <TouchableOpacity
                         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                         onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle-o" size={20} color={Color.primary} />
+                        <Icon name="question-circle" size={20} color={Color.yellow} />
                     </TouchableOpacity>
                 </View>
 
@@ -153,8 +162,6 @@ class CalculatorScreen extends React.Component {
         } else {
             Alert.alert('Check', 'Please fill in all the values first!')
         }
-
-        
     }
 
     submitDialog(text) {
@@ -180,11 +187,9 @@ class CalculatorScreen extends React.Component {
             created: date
         }
         dict = JSON.stringify(dict);
-        storeData(text, dict).then(() => {
-            getAllData().then((value) => {
-                this.setState({listings: value}, () => {
-                    this.props.calculateValues(this.state);
-                })
+        storeData(text, dict).then((newVersion) => {
+            this.setState({storageVersion: newVersion}, () =>{
+                this.props.calculateValues(this.state);
             });
         });
         this.showDialog(false);

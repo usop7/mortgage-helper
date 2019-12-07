@@ -7,6 +7,7 @@ export const Color = {
     primary: '#5CA4A9',
     dark: '#4C878B',
     highlight: '#a13559',
+    yellow: '#ffc74f',
 }
 
 
