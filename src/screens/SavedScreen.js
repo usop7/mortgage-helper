@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Text, View, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import { getAllData, removeData, getVersion } from '../storage/StorageHelper'
+import { getAllData, removeData } from '../storage/StorageHelper'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { uncomma, comma, title } from '../tools/comma'
@@ -16,39 +16,21 @@ class SavedScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            storageVersion: '',
             listings: [],
         }
-        console.log('saved screen: constructing')
     }
 
     componentDidMount() {
-        // set up the storage version
-        getVersion().then(version => {
-            // get all listings data
+
+        // add listner
+        this.props.navigation.addListener ('willFocus', () => {
             getAllData().then(data => {
                 this.setState({
-                    storageVersion: version,
                     listings: data}, () => {
-                        console.log('saved screen: component did mount');
+                        console.log('saved screen: component loading');
                 });
             });
         });
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.values.storageVersion !== this.props.values.storageVersion) {
-            getVersion().then(version => {
-                // get all listings data
-                getAllData().then(data => {
-                    this.setState({
-                        storageVersion: version,
-                        listings: data}, () => {
-                            console.log('saved screen: component did update');
-                    });
-                });
-            });
-        }
     }
 
     render() {
@@ -83,7 +65,7 @@ class SavedScreen extends React.Component {
             getAllData().then(data => {
                 this.setState({
                     listings: data}, () => {
-                        console.log(this.state);
+                        console.log('listing deleted');
                 });
             });
         })
@@ -101,6 +83,7 @@ class ListingComponent extends React.PureComponent {
                         title: this.props.title,
                         homePrice: this.props.item.homePrice,
                         downPayment: this.props.item.downPayment,
+                        downRate: this.props.item.downRate,
                         term: this.props.item.term,
                         rate: this.props.item.rate,
                         frequency: this.props.item.frequency}) }} >
@@ -209,7 +192,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
         padding: 10,
         paddingLeft: 20,
-        backgroundColor: '#f7f7f7',
     },
     row: {
         flexDirection: 'row',

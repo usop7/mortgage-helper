@@ -1,16 +1,50 @@
 import React from 'react';
-import { Text, View, StyleSheet, FlatList, Dimensions, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
+import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
 import { uncomma, comma } from '../tools/comma'
 import { Color } from '../components/Values'
-
+import { isTSConstructorType } from '@babel/types';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
+const radio_props = [
+    {label: 'Each payment', value: 0 },
+    {label: 'Yearly', value: 1 }
+  ];
 
 class DetailScreen extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            radio_value: 0,
+            mortgageAmount: '',
+            result: '',
+            frequency: 'Monthly',
+            n: 0, 
+            term: 0,
+            details: [],
+            detailsYear: []
+        }
+    }
+
+    componentDidMount() {
+        // add listner
+        this.willFocusSubscription = this.props.navigation.addListener('willFocus', () => {
+            this.setState({
+                mortgageAmount: this.props.values.mortgageAmount,
+                result: this.props.values.result,
+                n: this.props.values.n,
+                term: this.props.values.term,
+                frequency: this.props.values.frequency,
+                details: this.props.values.details,
+                detailsYear: this.props.values.detailsYear,
+            });
+        });
+    }
 
     render() {
         return (
@@ -18,19 +52,35 @@ class DetailScreen extends React.Component {
                 <View style={styles.header}>
                     <View style={styles.headerItem}>
                         <Text style={{color: 'white', textAlign: 'center'}}>MORTGAGE{"\n"}AMOUNT</Text>
-                        <Text style={styles.result}>$ {this.props.values.mortgageAmount}</Text>
+                        <Text style={styles.result}>$ {this.state.mortgageAmount}</Text>
                     </View>
 
                     <View style={styles.headerItem}>
-                        <Text style={{color: 'white', textAlign: 'center'}}>{this.props.values.frequency.toUpperCase()}{"\n"}PAYMENT</Text>
-                        <Text style={styles.result}>$ {this.props.values.result}</Text>
+                        <Text style={{color: 'white', textAlign: 'center'}}>
+                        {this.state.frequency !== undefined ? this.state.frequency.toUpperCase() : ''}{"\n"}PAYMENT</Text>
+                        <Text style={styles.result}>$ {this.state.result}</Text>
                     </View>
 
                     <View style={styles.headerItem}>
                         <Text style={{color: 'white', textAlign: 'center'}}>TIMES</Text>
-                        <Text style={[styles.result, {marginTop: 0}]}>{this.props.values.n}</Text>
-                        <Text style={{color: 'white', textAlign: 'center'}}>{this.props.values.term} YEARS</Text>
+                        <Text style={[styles.result, {marginTop: 0}]}>{this.state.n}</Text>
+                        <Text style={{color: 'white', textAlign: 'center'}}>{this.state.term} YEARS</Text>
                     </View>
+                </View>
+
+            <View style={{alignItems: 'center'}}>
+                <RadioForm
+                    radio_props={radio_props}
+                    animation={false}
+                    initial={0}
+                    buttonColor={'#ffffff'}
+                    buttonSize={15}
+                    selectedButtonColor={'#ffffff'}
+                    labelColor={'#ffffff'}
+                    labelStyle={{marginRight: 20, fontSize: 15}}
+                    selectedLabelColor={'#ffffff'}
+                    onPress={(value) => {this.setState({radio_value: value})}}
+                    formHorizontal={true}  />
                 </View>
 
                 <View style={styles.container}>
@@ -43,12 +93,13 @@ class DetailScreen extends React.Component {
                     </View>
 
                     <FlatList
-                        data={this.props.values.details}
+                        data={this.state.radio_value === 0 ? this.state.details : this.state.detailsYear}
                         keyExtractor= { (item, index) => index.toString() }
                         renderItem={this._renderItem}
                     />
 
-            </View>
+                </View>
+
           </View>
         );
     }

@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import DialogInput from 'react-native-dialog-input';
 
 import { uncomma, comma } from '../tools/comma'
-import { storeData, getAllData, getVersion, VERSION_STR } from '../storage/StorageHelper'
+import { storeData, getAllData } from '../storage/StorageHelper'
 import { Color } from '../components/Values'
 
 const HEIGHT = Dimensions.get('window').height;
@@ -22,41 +22,56 @@ class CalculatorScreen extends React.Component {
 
             homePrice: '',
             downPayment: '',
+            downRate: '',
             rate: '',
             term: '',
             frequency: 'Monthly',
             
             n: 0,
-            result: '',
+            result: '0',
             mortgageAmount: '',
             totalInterest: '',
             totalPayment: '',
             details: [],
-
-            storageVersion: '',
+            detailsYear: [],
         }
     }
 
     componentDidMount() {
-        getVersion().then(version => {
-            this.setState({
-                storageVersion: version}, () => {
-                    this.props.calculateValues(this.state);
+        // add listner
+        this.willFocusSubscription = this.props.navigation.addListener('willFocus', () => {
+            if (this.props.navigation.getParam('homePrice') != undefined && this.props.navigation.getParam('homePrice') !== '') {
+                this.setState({
+                    homePrice: this.props.navigation.getParam('homePrice', ''),
+                    downPayment: this.props.navigation.getParam('downPayment', ''),
+                    downRate: this.props.navigation.getParam('downRate', ''),
+                    term: this.props.navigation.getParam('term', ''),
+                    rate: this.props.navigation.getParam('rate', ''),
+                    frequency: this.props.navigation.getParam('frequency', '')
+                }, () => {
+                    this._calculateMortgage();
+                });
+            }
+            
+        });
+
+        this.willBlurSubscription = this.props.navigation.addListener('willBlur', () => {
+            this.props.navigation.setParams({
+                title: '',
+                homePrice: '',
+                downPayment: '',
+                downRate: '',
+                term: '',
+                rate: '',
+                frequency: '',
             });
         });
 
-        // add listner
-        this.props.navigation.addListener ('willFocus', () => {
-            this.setState({
-                homePrice: this.props.navigation.getParam('homePrice', ''),
-                downPayment: this.props.navigation.getParam('downPayment', ''),
-                term: this.props.navigation.getParam('term', ''),
-                rate: this.props.navigation.getParam('rate', ''),
-                frequency: this.props.navigation.getParam('frequency', 'Monthly')
-            }, () => {
-                this._calculateMortgage();
-            });
-        });
+    }
+
+    componentWillUnmount() {
+        this.willFocusSubscription.remove();
+        this.willBlurSubscription.remove();
     }
 
     render() {
@@ -64,72 +79,83 @@ class CalculatorScreen extends React.Component {
           <ScrollView style={styles.screen}>
           
             <View style={styles.header}>
-                <Text style={{fontSize: 18, color: 'white'}}>{this.state.frequency} Payment</Text>
+                <Text style={{fontSize: 18, color: 'white', fontFamily: 'Lato-Regular',}}>{this.state.frequency} Payment</Text>
                 <Text style={styles.result}>$ {comma(this.state.result)}</Text>
             </View>
 
             <View style={styles.container}>
 
                 <View style={styles.row}>
+                    <Text style={styles.titleText}>Home Price ($)</Text>
+                </View>
+                <View style={styles.marginBottomRow}>
                     <Icon name="home" size={35} color={Color.primary} />
                     <TextInput 
                         style={styles.input}
                         onChangeText={text => {this._onInputChange(text, 'homePrice')}}
                         value={this.state.homePrice}
                         keyboardType={'numeric'}
-                        placeholder="Home Price ($)"/>
-                    <TouchableOpacity
-                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle" size={20} color={Color.yellow} />
-                    </TouchableOpacity>
+                        placeholder="300,000"/>
+                    
                 </View>
 
                 <View style={styles.row}>
-                    <Icon name="download" size={35} color={Color.primary} />
+                    <Text style={styles.titleText}>Down Payment</Text>
+                    <TouchableOpacity
+                        onPress={() => Alert.alert('Down Payment', 'The price of the home you may want to buy.')}>
+                        <Icon name="question-circle" size={20} color={Color.yellow} style={{marginLeft: 10}} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.marginBottomRow}>
+                    <Icon name="money" size={32} color={Color.primary} />
                     <TextInput 
-                        style={styles.input} 
+                        style={[styles.input, {width: '46%'}]} 
                         onChangeText={text => {this._onInputChange(text, 'downPayment')}}
                         value={this.state.downPayment}
                         keyboardType={'numeric'}
-                        placeholder="Down Payment ($)"/>
-                    <TouchableOpacity
-                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle" size={20} color={Color.yellow} />
-                    </TouchableOpacity>
+                        placeholder="60,000"/>
+                    <TextInput 
+                        style={[styles.input, {width: 70, marginLeft: 10}]}
+                        onChangeText={text => {this._onInputChange(text, 'downRate')}}
+                        value={this.state.downRate}
+                        keyboardType={'numeric'}
+                        placeholder="20"/>
+                    <Text style={{flex: 1, alignSelf: 'center', color: Color.dark}}> %</Text>
                 </View>
 
                 <View style={styles.row}>
+                    <Text style={styles.titleText}>Mortgage Years</Text>
+                </View>
+                <View style={styles.marginBottomRow}>
                     <Icon name="calendar" size={35} color={Color.primary} />
                     <TextInput 
                         style={styles.input}
                         onChangeText={text => {this._onInputChange(text, 'term')}}
                         keyboardType={'numeric'}
                         value={this.state.term}
-                        placeholder="Mortgage Years"/>
-                    <TouchableOpacity
-                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle" size={20} color={Color.yellow} />
-                    </TouchableOpacity>
+                        placeholder="25"/>
                 </View>
 
                 <View style={styles.row}>
+                    <Text style={styles.titleText}>Interest Rate</Text>
+                    <TouchableOpacity
+                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
+                        <Icon name="question-circle" size={20} color={Color.yellow}  style={{marginLeft: 10}}/>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.marginBottomRow}>
                     <Icon name="percent" size={35} color={Color.primary} />
                     <TextInput 
                         style={styles.input}
                         onChangeText={text => {this._onInputChange(text, 'rate')}}
                         value={this.state.rate}
                         keyboardType={'numeric'}
-                        placeholder="Interest Rate"/>
-                    <TouchableOpacity
-                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle" size={20} color={Color.yellow} />
-                    </TouchableOpacity>
+                        placeholder="3.1"/>
                 </View>
 
+                <View style={styles.row}>
+                    <Text style={styles.titleText}>Payment Frequency</Text>
+                </View>
                 <View style={[styles.row, {marginBottom: 25}]}>
                     <Icon name="clock-o" size={35} color={Color.primary} />
                     <Picker
@@ -141,11 +167,6 @@ class CalculatorScreen extends React.Component {
                         <Picker.Item label="Bi-weekly" value="Bi-weekly" />
                         <Picker.Item label="Weekly" value="Weekly" />
                     </Picker>
-                    <TouchableOpacity
-                        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
-                        <Icon name="question-circle" size={20} color={Color.yellow} />
-                    </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity
@@ -184,7 +205,7 @@ class CalculatorScreen extends React.Component {
     submitDialog(text) {
 
         // check if the title is empty
-        if ((text.trim()).length === 0 || text === VERSION_STR) {
+        if (text.trim().length === 0) {
             Alert.alert('TITLE', 'Please enter the title.');
             return;
         }
@@ -203,6 +224,7 @@ class CalculatorScreen extends React.Component {
         let dict = {
             homePrice: this.state.homePrice,
             downPayment: this.state.downPayment,
+            downRate: this.state.downRate,
             rate: this.state.rate,
             term: this.state.term,
             frequency: this.state.frequency,
@@ -210,20 +232,42 @@ class CalculatorScreen extends React.Component {
             created: date
         }
         dict = JSON.stringify(dict);
-        storeData(text, dict).then((newVersion) => {
-            this.setState({storageVersion: newVersion}, () => {
-                this.props.calculateValues(this.state);
-                Alert.alert('Saved', 'The listing was saved.');
-            });
+        storeData(text, dict).then(() => {
+            Alert.alert('Saved', 'The listing was saved.');
         });
         this.showDialog(false);
     }
 
     _onInputChange = (text, type) => {
+        const homePrice = uncomma(this.state.homePrice);
         let value = text;
-        if (type === 'downPayment' || type === 'homePrice') {
+        if (type === 'downPayment') {
+            value = comma(uncomma(text));
+            if (homePrice > 0) {
+                if (parseFloat(uncomma(text)) > parseFloat(homePrice)) {
+                    Alert.alert('Check', 'Down payment can\'t be greater than the home price.');
+                    value = '';
+                    return;
+                }
+
+                const downRate = uncomma(text) / homePrice * 100;
+                if (downRate >= 1) {
+                    this.setState({
+                        downRate: downRate.toFixed(1).toString()
+                    })
+                }
+            }
+        } else if (type === 'downRate') {
+            if (homePrice > 0) {
+                const downPayment = Math.round(homePrice * text / 100);
+                this.setState({
+                    downPayment: comma(downPayment)
+                })
+            }
+        } else if (type === 'homePrice') {
             value = comma(uncomma(text))
         }
+
         this.setState({
             [type]: value
         },() => {
@@ -242,6 +286,7 @@ class CalculatorScreen extends React.Component {
         let isValid = (home > 0 && rate >= 0 && year > 0);
 
         var detailArray = [];
+        var detailArrayYear = [];
         const mortgage = Math.max(home - down, 0);
 
         let result = '', totalPayment = '', totalInterest = '', n = 0;
@@ -271,10 +316,13 @@ class CalculatorScreen extends React.Component {
             totalInterest = totalPayment - mortgage;
 
             // Calculate details
+            let interest, principal, yearInterest = 0, yearPrincipal = 0;
             for (let t = 1; t <= n; t++)
             {
-                let interest = balance * i;
-                let principal = result - interest;
+                interest = balance * i;
+                yearInterest += interest;
+                principal = result - interest;
+                yearPrincipal += principal;
                 balance = balance - principal;
 
                 detailArray = detailArray.concat({
@@ -282,6 +330,17 @@ class CalculatorScreen extends React.Component {
                                             Principal: comma(Math.round(principal, 0)), 
                                             Interest: comma(Math.round(interest, 0)), 
                                             Balance: comma(Math.round(balance, 0))});
+
+                if (t % divider === 0) {
+                    detailArrayYear = detailArrayYear.concat({
+                        No: t / divider,
+                        Principal: comma(Math.round(yearPrincipal, 0)), 
+                        Interest: comma(Math.round(yearInterest, 0)), 
+                        Balance: comma(Math.round(balance, 0))});
+                    yearInterest = 0;
+                    yearPrincipal = 0;
+                }
+                
             }
 
         }
@@ -293,7 +352,8 @@ class CalculatorScreen extends React.Component {
             mortgageAmount: comma(mortgage),
             totalInterest: comma(Math.round(totalInterest, 0)),
             totalPayment: comma(Math.round(totalPayment, 0)),
-            details: detailArray
+            details: detailArray,
+            detailsYear: detailArrayYear,
         }, () => {
             this.props.calculateValues(this.state);
         } );
@@ -315,6 +375,7 @@ class CalculatorScreen extends React.Component {
         borderRadius: 10,
     },
     result: {
+        fontFamily: 'Lato-Regular',
         fontSize: 40,
         color: 'white',
         fontWeight: 'bold',
@@ -332,16 +393,24 @@ class CalculatorScreen extends React.Component {
     },
     row: {
         flexDirection: 'row',
-        marginTop: 10,
-        marginBottom: 10,
+        marginBottom: 5,
+    },
+    marginBottomRow: {
+        flexDirection: 'row',
+        marginBottom: 15,
     },
     input: {
         backgroundColor: '#ededed',
         borderRadius: 30,
-        width: '70%',
+        width: '80%',
         height: 40,
         marginLeft: 20,
         paddingLeft: 20,
+    },
+    titleText: {
+        fontFamily: 'Lato-Regular',
+        color: Color.dark,
+        fontSize: 16,
     },
     picker: {
         height: 40, 

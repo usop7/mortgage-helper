@@ -13,6 +13,8 @@ import { Color } from '../components/Values'
 /*
 class RateScreen extends React.Component {
 
+    https://www.bankofcanada.ca/valet/observations/BROKER_AVERAGE_5YR_VRM/json?recent=5
+
     render() {
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
