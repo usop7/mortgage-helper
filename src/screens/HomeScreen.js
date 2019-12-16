@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import CalculatorScreen from './CalculatorScreen'
 import DetailScreen from './DetailScreen'
+import ChartScreen from './ChartScreen'
 import SavedScreen from './SavedScreen'
 import { Color } from '../components/Values'
 
@@ -29,7 +30,7 @@ const TabNavigator = createBottomTabNavigator(
     {
         Calculator: CalculatorScreen,
         Detail: DetailScreen,
-        //Rate: RateScreen,
+        Chart: ChartScreen,
         Saved: SavedScreen
     },
     {
@@ -41,8 +42,8 @@ const TabNavigator = createBottomTabNavigator(
                     iconName = "calculator";
                 } else if (routeName === 'Detail') {
                     iconName = "list";
-                } else if (routeName === 'Rate') {
-                    iconName = "percent";
+                } else if (routeName === 'Chart') {
+                    iconName = "pie-chart";
                 } else if (routeName === 'Saved') {
                     iconName = "bookmark-o";
                 }

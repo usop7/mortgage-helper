@@ -21,14 +21,19 @@ class SavedScreen extends React.Component {
     }
 
     componentDidMount() {
+        this._getListings();
 
         // add listner
         this.props.navigation.addListener ('willFocus', () => {
-            getAllData().then(data => {
-                this.setState({
-                    listings: data}, () => {
-                        console.log('saved screen: component loading');
-                });
+            this._getListings();
+        });
+    }
+
+    _getListings() {
+        getAllData().then(data => {
+            this.setState({
+                listings: data}, () => {
+                    console.log('saved screen: component loading');
             });
         });
     }
@@ -38,7 +43,7 @@ class SavedScreen extends React.Component {
             <View style={styles.screen}>
           
                 <View style={styles.header}>
-                    <Text style={{fontSize: 18, color: 'white'}}>SAVED</Text>
+                    <Text style={{fontSize: 18, color: 'white', fontFamily: 'Lato-Regular'}}>Saved Scenarios</Text>
                 </View>
 
                 <View style={styles.container}>
@@ -75,7 +80,7 @@ class SavedScreen extends React.Component {
 class ListingComponent extends React.PureComponent {
     render() {
         return (
-            <View style={[styles.listing, styles.dropShadowDefault, {flexDirection:'row'}]}>
+            <View style={[styles.listing, {flexDirection:'row'}]}>
 
                 <TouchableOpacity 
                     style={{width: '85%'}}
@@ -89,7 +94,7 @@ class ListingComponent extends React.PureComponent {
                         frequency: this.props.item.frequency}) }} >
 
                     <Text style={styles.title}>{title(this.props.title)}</Text>
-                    <Text style={[styles.line, {color: 'gray'}]}>Created on {this.props.item.created}</Text>
+                    <Text style={[styles.line, styles.cell, {color: 'gray'}]}>Created on {this.props.item.created}</Text>
 
                     <View style={styles.row}>
                         <Text style={styles.cell}>Home Price</Text>
@@ -160,13 +165,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         borderRadius: 10,
     },
-    result: {
-        fontSize: 40,
-        color: 'white',
-        fontWeight: 'bold',
-        alignSelf: 'center',
-        marginTop: 10,
-    },
     container: {
         flex: 1,
         backgroundColor: 'white',
@@ -180,14 +178,17 @@ const styles = StyleSheet.create({
     title: {
         color: Color.dark,
         fontSize: 16,
+        fontFamily: 'Lato-Regular',
+        margin: 2,
     },
     listing: {
         marginTop: 10,
         marginBottom: 10,
         width: '95%',
         alignSelf: 'center',
-
         borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#e3e3e3',
         borderBottomColor: Color.primary,
         borderBottomWidth: 3,
         padding: 10,
@@ -197,21 +198,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     cell: {
+        margin: 2,
+        fontFamily: 'Lato-Regular',
         width: (WIDTH * 0.9) / 2 - 20,
     },
     deleteCell: {
         width: 25,
     },
-    /* Drop Shadows */
-    dropShadowDefault: {
-        //ios
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        shadowOffset: {height: 2, width: 2},
-        //android 
-        elevation: 2,
-    }
-
 });
 
 const mapStateToProps = (state) => {

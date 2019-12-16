@@ -1,18 +1,17 @@
 import React from 'react';
-import { Text, View, StyleSheet, FlatList, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
 import { uncomma, comma } from '../tools/comma'
 import { Color } from '../components/Values'
-import { isTSConstructorType } from '@babel/types';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 const radio_props = [
     {label: 'Each payment', value: 0 },
-    {label: 'Yearly', value: 1 }
+    {label: 'Cumulative(yearly)', value: 1 }
   ];
 
 class DetailScreen extends React.Component {
@@ -50,46 +49,54 @@ class DetailScreen extends React.Component {
         return (
             <View style={styles.screen}>
                 <View style={styles.header}>
-                    <View style={styles.headerItem}>
-                        <Text style={{color: 'white', textAlign: 'center'}}>MORTGAGE{"\n"}AMOUNT</Text>
-                        <Text style={styles.result}>$ {this.state.mortgageAmount}</Text>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerItem}>Mortgage Amount</Text>
+                        <Text style={styles.headerItem}>$ {this.state.mortgageAmount}</Text>
                     </View>
 
-                    <View style={styles.headerItem}>
-                        <Text style={{color: 'white', textAlign: 'center'}}>
-                        {this.state.frequency !== undefined ? this.state.frequency.toUpperCase() : ''}{"\n"}PAYMENT</Text>
-                        <Text style={styles.result}>$ {this.state.result}</Text>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerItem}>
+                        {this.state.frequency !== undefined ? this.state.frequency : ''}Payment</Text>
+                        <Text style={styles.headerItem}>$ {this.state.result}</Text>
                     </View>
 
-                    <View style={styles.headerItem}>
-                        <Text style={{color: 'white', textAlign: 'center'}}>TIMES</Text>
-                        <Text style={[styles.result, {marginTop: 0}]}>{this.state.n}</Text>
-                        <Text style={{color: 'white', textAlign: 'center'}}>{this.state.term} YEARS</Text>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerItem}>Number of Payments</Text>
+                        <Text style={styles.headerItem}>{this.state.n} ({this.state.term} years)</Text>
                     </View>
                 </View>
 
-            <View style={{alignItems: 'center'}}>
-                <RadioForm
-                    radio_props={radio_props}
-                    animation={false}
-                    initial={0}
-                    buttonColor={'#ffffff'}
-                    buttonSize={15}
-                    selectedButtonColor={'#ffffff'}
-                    labelColor={'#ffffff'}
-                    labelStyle={{marginRight: 20, fontSize: 15}}
-                    selectedLabelColor={'#ffffff'}
-                    onPress={(value) => {this.setState({radio_value: value})}}
-                    formHorizontal={true}  />
+                <View style={{flexDirection: 'row', marginBottom: 10}}>
+                    <Text style={styles.titleText}>Amortization Schedule</Text>
+                    <TouchableOpacity
+                        onPress={() => Alert.alert('Amortization Schedule', 'Each mortgage payment consists of principal and interest which change over time. You mortgage balance decreases by the principal amount.')}>
+                        <Icon name="question-circle" size={20} color={Color.yellow} style={{marginLeft: 10}} />
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.container}>
 
-                    <View style={styles.row}>
-                        <Text style={[styles.cell, {width: 30, fontWeight: 'bold'}]}>#</Text>
-                        <Text style={[styles.cell, {fontWeight: 'bold'}]}>Principal</Text>
-                        <Text style={[styles.cell, {fontWeight: 'bold'}]}>Interest</Text>
-                        <Text style={[styles.cell, {fontWeight: 'bold'}]}>Balance</Text>
+                    <View style={styles.radioBox}>
+                        <RadioForm
+                            radio_props={radio_props}
+                            animation={false}
+                            initial={0}
+                            buttonColor={Color.primary}
+                            buttonSize={10}
+                            selectedButtonColor={Color.primary}
+                            labelColor={Color.dark}
+                            labelStyle={{marginRight: 20, fontFamily: 'Lato-Regular'}}
+                            selectedLabelColor={Color.dark}
+                            onPress={(value) => {this.setState({radio_value: value})}}
+                            formHorizontal={true}  />
+                    </View>
+
+                    <View style={[styles.row, {backgroundColor: '#e3e3e3'}]}>
+                        <Text style={[styles.cell, {width: 30}]}>#</Text>
+                        <Text style={styles.cell}>Balance</Text>
+                        <Text style={styles.cell}>Payment</Text>
+                        <Text style={styles.cell}>Principal</Text>
+                        <Text style={styles.cell}>Interest</Text>
                     </View>
 
                     <FlatList
@@ -106,6 +113,7 @@ class DetailScreen extends React.Component {
     _renderItem = ({item}) => (
         <RowComponent 
             no={item.No}
+            payment={item.Payment}
             principal={item.Principal}
             interest={item.Interest}
             balance={item.Balance} />
@@ -119,9 +127,10 @@ class RowComponent extends React.PureComponent {
         return (
             <View style={styles.row}>
                 <Text style={[styles.cell, {width: 30}]}>{this.props.no}</Text>
+                <Text style={[styles.cell, {color: Color.dark}]}>{this.props.balance}</Text>
+                <Text style={styles.cell}>{this.props.payment}</Text>
                 <Text style={styles.cell}>{this.props.principal}</Text>
                 <Text style={styles.cell}>{this.props.interest}</Text>
-                <Text style={[styles.cell, {color: Color.dark}]}>{this.props.balance}</Text>
             </View>
         )
     }
@@ -133,22 +142,28 @@ const styles = StyleSheet.create({
         backgroundColor: Color.primary,
     },
     header: {
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 20,
-        borderRadius: 10,
+        margin: 15,
+        width: '95%',
+        alignSelf: 'center',
+        padding: 5,
+        backgroundColor: Color.dark,
         paddingLeft: 15,
+    },
+    headerRow: {
+        margin: 3,
         flexDirection: 'row',
     },
     headerItem: {
-        width: (WIDTH - 30) / 3,
+        width: WIDTH * 0.95 / 2,
         alignItems: 'center',
-    },
-    result: {
-        marginTop: 5,
-        fontSize: 20,
         color: 'white',
-        fontWeight: 'bold',
+        fontFamily: 'Lato-Regular',
+    },
+    titleText: {
+        paddingLeft: 15,
+        fontSize: 15,
+        color: 'white',
+        fontFamily: 'Lato-Bold',
     },
     container: {
         flex: 1,
@@ -160,6 +175,10 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 15,
         minHeight: HEIGHT - 200,
     },
+    radioBox: {
+        alignSelf: 'center',
+        margin: 5,
+    },
     row: {
         flexDirection: 'row',
         paddingBottom: 5,
@@ -168,8 +187,9 @@ const styles = StyleSheet.create({
         borderColor: '#e3e3e3',
     },
     cell: {
-        width: (WIDTH * 0.9 - 30)/3,
-        textAlign: 'center'
+        width: (WIDTH * 0.9 - 30)/4,
+        textAlign: 'center',
+        fontFamily: 'Lato-Regular',
     },
     box: {
         marginTop: 10,

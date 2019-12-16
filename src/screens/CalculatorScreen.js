@@ -20,11 +20,11 @@ class CalculatorScreen extends React.Component {
             dialogVisible: false,
             updated: false,
 
-            homePrice: '',
-            downPayment: '',
-            downRate: '',
-            rate: '',
-            term: '',
+            homePrice: '300,000',
+            downPayment: '60,000',
+            downRate: '20',
+            rate: '3.1',
+            term: '25',
             frequency: 'Monthly',
             
             n: 0,
@@ -38,6 +38,7 @@ class CalculatorScreen extends React.Component {
     }
 
     componentDidMount() {
+        this._calculateMortgage();
         // add listner
         this.willFocusSubscription = this.props.navigation.addListener('willFocus', () => {
             if (this.props.navigation.getParam('homePrice') != undefined && this.props.navigation.getParam('homePrice') !== '') {
@@ -86,7 +87,7 @@ class CalculatorScreen extends React.Component {
             <View style={styles.container}>
 
                 <View style={styles.row}>
-                    <Text style={styles.titleText}>Home Price ($)</Text>
+                    <Text style={styles.titleText}>Home Price</Text>
                 </View>
                 <View style={styles.marginBottomRow}>
                     <Icon name="home" size={35} color={Color.primary} />
@@ -102,7 +103,7 @@ class CalculatorScreen extends React.Component {
                 <View style={styles.row}>
                     <Text style={styles.titleText}>Down Payment</Text>
                     <TouchableOpacity
-                        onPress={() => Alert.alert('Down Payment', 'The price of the home you may want to buy.')}>
+                        onPress={() => Alert.alert('Down Payment', 'An initial amount of money that you pay by cash when buying a home.')}>
                         <Icon name="question-circle" size={20} color={Color.yellow} style={{marginLeft: 10}} />
                     </TouchableOpacity>
                 </View>
@@ -139,7 +140,7 @@ class CalculatorScreen extends React.Component {
                 <View style={styles.row}>
                     <Text style={styles.titleText}>Interest Rate</Text>
                     <TouchableOpacity
-                        onPress={() => Alert.alert('Home Price', 'The price of the home you may want to buy.')}>
+                        onPress={() => Alert.alert('Interest Rate', 'Interest rate varies from one bank to another, and also from your mortgage conditions.')}>
                         <Icon name="question-circle" size={20} color={Color.yellow}  style={{marginLeft: 10}}/>
                     </TouchableOpacity>
                 </View>
@@ -179,7 +180,7 @@ class CalculatorScreen extends React.Component {
                     isDialogVisible={this.state.dialogVisible}
                     title={"Save"}
                     message={"Enter a mortgage name"}
-                    hintInput ={"430K Townhouse"}
+                    hintInput ={"Burnaby 1 bed"}
                     submitInput={ (text) => this.submitDialog(text) }
                     closeDialog={ () => this.showDialog(false)}>
                 </DialogInput>
@@ -239,7 +240,7 @@ class CalculatorScreen extends React.Component {
     }
 
     _onInputChange = (text, type) => {
-        const homePrice = uncomma(this.state.homePrice);
+        let homePrice = uncomma(this.state.homePrice);
         let value = text;
         if (type === 'downPayment') {
             value = comma(uncomma(text));
@@ -265,7 +266,14 @@ class CalculatorScreen extends React.Component {
                 })
             }
         } else if (type === 'homePrice') {
-            value = comma(uncomma(text))
+            homePrice = uncomma(text);
+            value = comma(uncomma(text));
+            if (this.state.downRate > 0) {
+                const downPayment = Math.round(homePrice * this.state.downRate / 100);
+                this.setState({
+                    downPayment: comma(downPayment)
+                })
+            }
         }
 
         this.setState({
@@ -327,6 +335,7 @@ class CalculatorScreen extends React.Component {
 
                 detailArray = detailArray.concat({
                                             No: t, 
+                                            Payment: comma(Math.round(result, 0)),
                                             Principal: comma(Math.round(principal, 0)), 
                                             Interest: comma(Math.round(interest, 0)), 
                                             Balance: comma(Math.round(balance, 0))});
@@ -334,11 +343,10 @@ class CalculatorScreen extends React.Component {
                 if (t % divider === 0) {
                     detailArrayYear = detailArrayYear.concat({
                         No: t / divider,
+                        Payment: comma(Math.round(result * t, 0)),
                         Principal: comma(Math.round(yearPrincipal, 0)), 
                         Interest: comma(Math.round(yearInterest, 0)), 
                         Balance: comma(Math.round(balance, 0))});
-                    yearInterest = 0;
-                    yearPrincipal = 0;
                 }
                 
             }
@@ -406,6 +414,7 @@ class CalculatorScreen extends React.Component {
         height: 40,
         marginLeft: 20,
         paddingLeft: 20,
+        paddingTop: 10,
     },
     titleText: {
         fontFamily: 'Lato-Regular',
