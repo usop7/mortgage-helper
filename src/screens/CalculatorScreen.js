@@ -103,7 +103,7 @@ class CalculatorScreen extends React.Component {
                 <View style={styles.row}>
                     <Text style={styles.titleText}>Down Payment</Text>
                     <TouchableOpacity
-                        onPress={() => Alert.alert('Down Payment', 'An initial amount of money that you pay by cash when buying a home.')}>
+                        onPress={() => Alert.alert('Down Payment', 'An initial amount of money that you pay up front when buying a home.')}>
                         <Icon name="question-circle" size={20} color={Color.yellow} style={{marginLeft: 10}} />
                     </TouchableOpacity>
                 </View>
@@ -140,7 +140,7 @@ class CalculatorScreen extends React.Component {
                 <View style={styles.row}>
                     <Text style={styles.titleText}>Interest Rate</Text>
                     <TouchableOpacity
-                        onPress={() => Alert.alert('Interest Rate', 'Interest rate varies from one bank to another, and also from your mortgage conditions.')}>
+                        onPress={() => Alert.alert('Interest Rate', 'Interest rate varies from one bank to another, and based on your mortgage conditions.')}>
                         <Icon name="question-circle" size={20} color={Color.yellow}  style={{marginLeft: 10}}/>
                     </TouchableOpacity>
                 </View>
@@ -397,7 +397,7 @@ class CalculatorScreen extends React.Component {
         padding: 30,
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
-        minHeight: HEIGHT - 200,
+        minHeight: HEIGHT - 195,
     },
     row: {
         flexDirection: 'row',

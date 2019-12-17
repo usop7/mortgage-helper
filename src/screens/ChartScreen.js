@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, View, StyleSheet, Dimensions } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, Dimensions, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import { PieChart } from 'react-native-svg-charts'
@@ -111,8 +111,7 @@ class ChartScreen extends React.Component {
             .map((value, index) => ({
                 value,
                 svg: {
-                    fill: colors[index],
-                    onPress: () => console.log('press', index),
+                    fill: colors[index]
                 },
                 key: index,
             }))

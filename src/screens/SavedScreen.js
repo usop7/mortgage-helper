@@ -16,6 +16,7 @@ class SavedScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            noResult: '',
             listings: [],
         }
     }
@@ -32,9 +33,9 @@ class SavedScreen extends React.Component {
     _getListings() {
         getAllData().then(data => {
             this.setState({
-                listings: data}, () => {
-                    console.log('saved screen: component loading');
-            });
+                listings: data,
+                noResult: (data.length === 0 ? 'No scenarios saved' : '')
+            })
         });
     }
 
@@ -47,14 +48,28 @@ class SavedScreen extends React.Component {
                 </View>
 
                 <View style={styles.container}>
-                    <FlatList
-                        data={this.state.listings}
-                        keyExtractor= { (item, index) => index.toString() }
-                        renderItem={this._renderItem} />
+                    {this._renderResult()}
                 </View>
 
             </View>
         );
+    }
+
+    _renderResult() {
+        if (this.state.noResult != '') {
+            return (
+                <Text style={styles.noResult}>
+                    {this.state.noResult}
+                </Text>
+            )
+        } else {
+            return (
+                <FlatList
+                    data={this.state.listings}
+                    keyExtractor= { (item, index) => index.toString() }
+                    renderItem={this._renderItem} />
+            )
+        }
     }
 
     _renderItem = ({item}) => (
@@ -174,6 +189,13 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
         minHeight: HEIGHT - 200,
+    },
+    noResult: {
+        flex: 1,
+        alignSelf: 'center',
+        color: Color.dark,
+        fontSize: 16,
+        fontFamily: 'Lato-Regular',
     },
     title: {
         color: Color.dark,

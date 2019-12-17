@@ -1,6 +1,5 @@
 import React from 'react';
-import { Text, View, StyleSheet, FlatList, Dimensions, TouchableOpacity, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, View, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
@@ -48,33 +47,24 @@ class DetailScreen extends React.Component {
     render() {
         return (
             <View style={styles.screen}>
+
                 <View style={styles.header}>
-                    <View style={styles.headerRow}>
-                        <Text style={styles.headerItem}>Mortgage Amount</Text>
-                        <Text style={styles.headerItem}>$ {this.state.mortgageAmount}</Text>
-                    </View>
-
-                    <View style={styles.headerRow}>
-                        <Text style={styles.headerItem}>
-                        {this.state.frequency !== undefined ? this.state.frequency : ''}Payment</Text>
-                        <Text style={styles.headerItem}>$ {this.state.result}</Text>
-                    </View>
-
-                    <View style={styles.headerRow}>
-                        <Text style={styles.headerItem}>Number of Payments</Text>
-                        <Text style={styles.headerItem}>{this.state.n} ({this.state.term} years)</Text>
-                    </View>
-                </View>
-
-                <View style={{flexDirection: 'row', marginBottom: 10}}>
-                    <Text style={styles.titleText}>Amortization Schedule</Text>
-                    <TouchableOpacity
-                        onPress={() => Alert.alert('Amortization Schedule', 'Each mortgage payment consists of principal and interest which change over time. You mortgage balance decreases by the principal amount.')}>
-                        <Icon name="question-circle" size={20} color={Color.yellow} style={{marginLeft: 10}} />
-                    </TouchableOpacity>
+                    <Text style={{fontSize: 18, color: 'white', fontFamily: 'Lato-Regular'}}>Amortization Schedule</Text>
                 </View>
 
                 <View style={styles.container}>
+
+                    <View style={{margin: 15}}>
+                        <Text style={styles.summary}>
+                            <Text>Your {this.state.frequency.toLowerCase()} payment of </Text>
+                            <Text style={{fontFamily: 'Lato-Bold'}}>${this.state.result} </Text>
+                            <Text>consists of </Text>
+                            <Text style={{fontFamily: 'Lato-Bold'}}>principal</Text>
+                            <Text> and </Text>
+                            <Text style={{fontFamily: 'Lato-Bold'}}>interest </Text>
+                            <Text>which change over time.{"\n\n"}As you pay off the mortgage, interest decreases and principal increases in each payment.</Text>
+                        </Text>
+                    </View>
 
                     <View style={styles.radioBox}>
                         <RadioForm
@@ -127,7 +117,7 @@ class RowComponent extends React.PureComponent {
         return (
             <View style={styles.row}>
                 <Text style={[styles.cell, {width: 30}]}>{this.props.no}</Text>
-                <Text style={[styles.cell, {color: Color.dark}]}>{this.props.balance}</Text>
+                <Text style={[styles.cell, {color: Color.dark, fontFamily: 'Lato-Bold'}]}>{this.props.balance}</Text>
                 <Text style={styles.cell}>{this.props.payment}</Text>
                 <Text style={styles.cell}>{this.props.principal}</Text>
                 <Text style={styles.cell}>{this.props.interest}</Text>
@@ -142,12 +132,15 @@ const styles = StyleSheet.create({
         backgroundColor: Color.primary,
     },
     header: {
-        margin: 15,
-        width: '95%',
+        width: '100%',
+        alignItems: 'center',
         alignSelf: 'center',
-        padding: 5,
-        backgroundColor: Color.dark,
-        paddingLeft: 15,
+        marginTop: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+    },
+    summary: {
+        fontFamily: 'Lato-Regular',
     },
     headerRow: {
         margin: 3,
