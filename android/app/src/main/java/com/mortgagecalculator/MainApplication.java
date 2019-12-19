@@ -1,4 +1,4 @@
-package com.mortgagecalculator;
+package com.kimsfinance.mortgagecalculator;
 
 import android.app.Application;
 import android.content.Context;

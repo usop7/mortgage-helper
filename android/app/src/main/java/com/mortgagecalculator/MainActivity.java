@@ -1,4 +1,4 @@
-package com.mortgagecalculator;
+package com.kimsfinance.mortgagecalculator;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
