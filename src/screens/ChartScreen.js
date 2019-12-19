@@ -79,73 +79,80 @@ class ChartScreen extends React.Component {
     }
 
     renderTotalChart() {
-        const totalPayment = parseInt(uncomma(this.state.result) * this.state.n);
-        const mortgageAmount = parseInt(uncomma(this.state.mortgageAmount));
-        const totalInterest = totalPayment - mortgageAmount;
-        const mortgageRate = Math.round(mortgageAmount / totalPayment * 100);
-        const data = [mortgageRate, 100 - mortgageRate];
-        const colors = [Color.light, Color.yellow];
+        if (this.state.result != 0 && this.state.result !== '') {
+            const totalPayment = parseInt(uncomma(this.state.result) * this.state.n);
+            const mortgageAmount = parseInt(uncomma(this.state.mortgageAmount));
+            const totalInterest = totalPayment - mortgageAmount;
+            const mortgageRate = Math.round(mortgageAmount / totalPayment * 100);
+            const data = [mortgageRate, 100 - mortgageRate];
+            const colors = [Color.light, Color.yellow];
 
-        const Labels = ({ slices, height, width }) => {
-            return slices.map((slice, index) => {
-                const { pieCentroid, data } = slice;
-                return (
-                    <SvgText
-                        key={index}
-                        x={pieCentroid[ 0 ]}
-                        y={pieCentroid[ 1 ]}
-                        fill={Color.dark}
-                        textAnchor={'middle'}
-                        alignmentBaseline={'middle'}
-                        fontSize={18}
-                        strokeWidth={0.2}
-                    >
-                        {data.value}%
-                    </SvgText>
-                )
-            })
-        }
- 
-        const pieData = data
-            .filter(value => value > 0)
-            .map((value, index) => ({
-                value,
-                svg: {
-                    fill: colors[index]
-                },
-                key: index,
-            }))
- 
-        return (
-            <View style={{marginTop: 15}}>
-                <PieChart
-                    style={ { height: 200 } }
-                    spacing={0}
-                    innerRadius={'40%'}
-                    data={ pieData }>
-                    <Labels/>
-                </PieChart>
-                
-                <View style={[styles.row, {marginTop: 15, alignSelf: 'center'}]}>
-                    <Icon name="square" size={20} color={Color.yellow} style={{marginLeft: 10}} />
-                    <Text style={styles.label}>Interest</Text>
+            const Labels = ({ slices, height, width }) => {
+                return slices.map((slice, index) => {
+                    const { pieCentroid, data } = slice;
+                    return (
+                        <SvgText
+                            key={index}
+                            x={pieCentroid[ 0 ]}
+                            y={pieCentroid[ 1 ]}
+                            fill={Color.dark}
+                            textAnchor={'middle'}
+                            alignmentBaseline={'middle'}
+                            fontSize={18}
+                            strokeWidth={0.2}
+                        >
+                            {data.value}%
+                        </SvgText>
+                    )
+                })
+            }
+    
+            const pieData = data
+                .filter(value => value > 0)
+                .map((value, index) => ({
+                    value,
+                    svg: {
+                        fill: colors[index]
+                    },
+                    key: index,
+                }))
+    
+            return (
+                <View style={{marginTop: 15}}>
+                    <PieChart
+                        style={ { height: 200 } }
+                        spacing={0}
+                        innerRadius={'40%'}
+                        data={ pieData }>
+                        <Labels/>
+                    </PieChart>
+                    
+                    <View style={[styles.row, {marginTop: 15, alignSelf: 'center'}]}>
+                        <Icon name="square" size={20} color={Color.yellow} style={{marginLeft: 10}} />
+                        <Text style={styles.label}>Interest</Text>
 
-                    <Icon name="square" size={20} color={Color.light} style={{marginLeft: 10}} />
-                    <Text style={styles.label}>Principal</Text>
+                        <Icon name="square" size={20} color={Color.light} style={{marginLeft: 10}} />
+                        <Text style={styles.label}>Principal</Text>
+                    </View>
                 </View>
-
-            </View>
-            
-        )
+            )
+        } else {
+            return (
+                <View></View>
+            )
+        }
     }
 
     renderTable() {
-        const totalPayment = parseInt(uncomma(this.state.result) * this.state.n);
+        let totalPayment = 0;
+        if (this.state.result != 0 && this.state.result !== '') {
+            totalPayment = parseInt(uncomma(this.state.result) * this.state.n);
+        }
         const mortgageAmount = this.state.mortgageAmount != "" ? parseInt(uncomma(this.state.mortgageAmount)) : 0;
-        const totalInterest = (mortgageAmount > 0) ? totalPayment - mortgageAmount : 0;
-        const mortgageRate = (mortgageAmount > 0) ? Math.round(mortgageAmount / totalPayment * 100) : 0;
-        const interestRate = (mortgageAmount > 0) ? 100 - mortgageRate : 0;
-        const totalRate = (mortgageAmount > 0) ? 100 : 0;
+        const totalInterest = (totalPayment > 0) ? totalPayment - mortgageAmount : 0;
+        const mortgageRate = (totalPayment > 0) ? Math.round(mortgageAmount / totalPayment * 100) : 0;
+        const interestRate = (totalPayment > 0) ? 100 - mortgageRate : 0;
+        const totalRate = (totalPayment > 0) ? 100 : 0;
 
         return (
             <View style={{marginTop: 15}}>
@@ -177,8 +184,6 @@ class ChartScreen extends React.Component {
     }
 
 }
-
-
 
 const styles = StyleSheet.create({
     screen: {

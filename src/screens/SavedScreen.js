@@ -82,12 +82,7 @@ class SavedScreen extends React.Component {
 
     _deleteListing(title) {
         removeData(title).then(() => {
-            getAllData().then(data => {
-                this.setState({
-                    listings: data}, () => {
-                        console.log('listing deleted');
-                });
-            });
+            this._getListings();
         })
     }
 }

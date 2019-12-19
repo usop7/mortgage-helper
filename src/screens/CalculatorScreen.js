@@ -240,24 +240,21 @@ class CalculatorScreen extends React.Component {
     }
 
     _onInputChange = (text, type) => {
-        let homePrice = uncomma(this.state.homePrice);
+        let homePrice = parseFloat(uncomma(this.state.homePrice));
         let value = text;
-        if (type === 'downPayment') {
-            value = comma(uncomma(text));
+        if (type === 'downPayment') {      
             if (homePrice > 0) {
-                if (parseFloat(uncomma(text)) > parseFloat(homePrice)) {
+                if (parseFloat(uncomma(text)) > homePrice) {
                     Alert.alert('Check', 'Down payment can\'t be greater than the home price.');
                     value = '';
                     return;
                 }
-
                 const downRate = uncomma(text) / homePrice * 100;
-                if (downRate >= 1) {
-                    this.setState({
-                        downRate: downRate.toFixed(1).toString()
-                    })
-                }
+                this.setState({
+                    downRate: downRate.toFixed(1).toString()
+                })
             }
+            value = comma(uncomma(text));
         } else if (type === 'downRate') {
             if (homePrice > 0) {
                 const downPayment = Math.round(homePrice * text / 100);
@@ -267,13 +264,13 @@ class CalculatorScreen extends React.Component {
             }
         } else if (type === 'homePrice') {
             homePrice = uncomma(text);
-            value = comma(uncomma(text));
             if (this.state.downRate > 0) {
                 const downPayment = Math.round(homePrice * this.state.downRate / 100);
                 this.setState({
                     downPayment: comma(downPayment)
                 })
             }
+            value = comma(uncomma(text));
         }
 
         this.setState({
@@ -286,8 +283,8 @@ class CalculatorScreen extends React.Component {
     _calculateMortgage = () => {
 
         // Variable Declaration
-        const home = uncomma(this.state.homePrice);
-        const down = uncomma(this.state.downPayment);
+        const home = parseFloat(uncomma(this.state.homePrice));
+        const down = parseFloat(uncomma(this.state.downPayment));
         const rate = (this.state.rate === '') ? 0 : this.state.rate;
         const year = this.state.term;
         const frequency = this.state.frequency;
