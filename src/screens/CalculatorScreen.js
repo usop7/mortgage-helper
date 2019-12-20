@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { calculateValues } from '../actions/CalculateAction';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DialogInput from 'react-native-dialog-input';
+import SplashScreen from 'react-native-splash-screen'
 
 import { uncomma, comma } from '../tools/comma'
 import { storeData, getAllData } from '../storage/StorageHelper'
@@ -39,6 +40,7 @@ class CalculatorScreen extends React.Component {
 
     componentDidMount() {
         this._calculateMortgage();
+        SplashScreen.hide();
         // add listner
         this.willFocusSubscription = this.props.navigation.addListener('willFocus', () => {
             if (this.props.navigation.getParam('homePrice') != undefined && this.props.navigation.getParam('homePrice') !== '') {
