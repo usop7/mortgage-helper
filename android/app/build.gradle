@@ -131,8 +131,8 @@ android {
         applicationId "com.kimsfinance.mortgagecalculator"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2.0"
+        versionCode 2.1
+        versionName "2.1"
     }
     splits {
         abi {

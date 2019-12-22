@@ -283,8 +283,8 @@ class CalculatorScreen extends React.Component {
     _calculateMortgage = () => {
 
         // Variable Declaration
-        const home = parseFloat(uncomma(this.state.homePrice));
-        const down = parseFloat(uncomma(this.state.downPayment));
+        const home = this.state.homePrice === '' ? 0 : parseFloat(uncomma(this.state.homePrice));
+        const down = this.state.downPayment === '' ? 0 : parseFloat(uncomma(this.state.downPayment));
         const rate = (this.state.rate === '') ? 0 : this.state.rate;
         const year = this.state.term;
         const frequency = this.state.frequency;
