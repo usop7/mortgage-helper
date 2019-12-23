@@ -17,6 +17,8 @@ import java.util.List;
 
 import com.sbugert.rnadmob.RNAdMobPackage;
 
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =

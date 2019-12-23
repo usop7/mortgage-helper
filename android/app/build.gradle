@@ -131,7 +131,7 @@ android {
         applicationId "com.kimsfinance.mortgagecalculator"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2.1
+        versionCode 3
         versionName "2.1"
     }
     splits {
@@ -198,6 +198,7 @@ dependencies {
 	implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
 	implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
     implementation project(':react-native-admob')
+    implementation project(':react-native-splash-screen')
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
